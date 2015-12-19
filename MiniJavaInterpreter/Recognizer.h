@@ -25,29 +25,29 @@ vector<rule> refreshRules(vector<rule>& P, vector<string>& VN)
 }
 
 // Функция сравнения правой части правила с цепочкой
-bool compareRules(rule& P, vector<string>& str)
+bool compareRules(rule& P, vector<lexem>& str)
 {
 	if (P.right.size() != str.size())
 		return false;
 	for (int i = 0; i < str.size(); i++)
-	if (P.right[i] != str[i])
+	if (P.right[i] != str[i].str_type)
 		return false;
 	return true;
 }
 
 // Функция свертки
-void Convolution(vector<string>& myStack, vector<rule>& P, vector<string>& VT, int TermHeadOfStak,
+void Convolution(vector<lexem>& myStack, vector<rule>& P, vector<string>& VT, int TermHeadOfStak,
 	vector<vector<precedenceRelation>> precedenceTable, vector<int>& numRules)
 {
-	int left = TermHeadOfStak - 1, right = TermHeadOfStak, pos1, pos2 = whatPosition(myStack[right], VT);
+	int left = TermHeadOfStak - 1, right = TermHeadOfStak, pos1, pos2 = whatPosition(myStack[right].str_type, VT);
 
 	// Посик символов составляющих освнову
 	while (left > 0)
 	{
-		if (isFrom(myStack[left], VT))
+		if (isFrom(myStack[left].str_type, VT))
 		{
 			// Если этом темр. символ то проверяем отношение предшествоания
-			pos1 = whatPosition(myStack[left], VT);
+			pos1 = whatPosition(myStack[left].str_type, VT);
 			// Составляем основу для  терм.символов с отношением =*
 			if (precedenceTable[pos1][pos2] == basic)
 			{
@@ -64,7 +64,7 @@ void Convolution(vector<string>& myStack, vector<rule>& P, vector<string>& VT, i
 			--left;
 	}
 
-	vector<string> buffer(myStack.begin() + 1 + left, myStack.end());
+	vector<lexem> buffer(myStack.begin() + 1 + left, myStack.end());
 
 	// Подбираем правило
 	for (int i = 0; i < P.size(); i++)
@@ -73,9 +73,10 @@ void Convolution(vector<string>& myStack, vector<rule>& P, vector<string>& VT, i
 		// Удаляем основу из стека
 		myStack.erase(myStack.begin() + left + 1, myStack.end());
 		// Пишем в стек леву часть правила - заменили основу
-		myStack.push_back(P[i].left);
+		myStack.push_back(lexem(P[i].left, _S));
 		// Записываем номер правила
 		numRules.push_back(i + 1);
+		cout << i + 1 << endl;
 		return;
 	}
 
@@ -88,7 +89,7 @@ struct  Recognizer
 	string VTFile, VNFile, RuleFile, TablePrecededFile;
 
 	//Стэк
-	vector<string> myStack;
+	vector<lexem> myStack;
 
 	// Мн-во терм символов.
 	vector<string> VT;
@@ -124,7 +125,7 @@ Recognizer::Recognizer()
 	RuleFile = "RuleFile.txt";
 	TablePrecededFile = "TablePrecededFile.txt";
 
-	myStack.push_back("$b");
+	myStack.push_back(lexem("$b", _$b));
 	TermHeadOfStak = 0;
 
 	readSymbols(VTFile, VT);
@@ -229,21 +230,21 @@ bool Recognizer::Recognize(lexem l)
 	// Номера правил
 	vector<int> numRules;
 
-	string c = l.str_type;
+	lexem c = l;
 	
-	pos1 = whatPosition(myStack[TermHeadOfStak], VT);
+	pos1 = whatPosition(myStack[TermHeadOfStak].str_type, VT);
 	// Распознание цепочки
 
 	// Если нетерм. символ то сразу переносим в стек.
-	if (isFrom(c, VN))
+	if (isFrom(c.str_type, VN))
 		myStack.push_back(c);
 	else
 	{
-		if (isFrom(c, VT))
+		if (isFrom(c.str_type, VT))
 		{
 			// Если терминальный символ, то смотрим его позицию для сравнения по таблице предшествования
 			// С верхушкой стека.
-			pos2 = whatPosition(c, VT);
+			pos2 = whatPosition(c.str_type, VT);
 
 			switch (precedenceTable[pos1][pos2])
 			{
@@ -279,11 +280,11 @@ bool Recognizer::Recognize(lexem l)
 							  Convolution(myStack, P, VT, TermHeadOfStak, precedenceTable, numRules);
 							  // Иещм к последний темр. символ
 							  TermHeadOfStak = myStack.size() - 1;
-							  while (!isFrom(myStack[TermHeadOfStak], VT))
+							  while (!isFrom(myStack[TermHeadOfStak].str_type, VT))
 							  {
 								  --TermHeadOfStak;
 							  }
-							  pos1 = whatPosition(myStack[TermHeadOfStak], VT);
+							  pos1 = whatPosition(myStack[TermHeadOfStak].str_type, VT);
 							  return false;
 			}
 			default:
@@ -293,7 +294,7 @@ bool Recognizer::Recognize(lexem l)
 		return true;
 	}
 	for (int j = 0; j < myStack.size(); j++)
-		cout << myStack[j] << " ";
+		cout << myStack[j].str << " ";
 	cout << endl;
 }
 
@@ -302,10 +303,14 @@ bool Recognizer::RecognizeLexems(vector<lexem> programm)
 	programm.push_back(lexem("$e", _$e));
 	for (int i = 0; i < programm.size(); i++)
 	{
-		while ((!Recognize(programm[i])));
-			
+		while ((!Recognize(programm[i])))
+		{
+			for (int j = 0; j < myStack.size(); j++)
+				cout << myStack[j].str << " ";
+			cout << endl;
+		}
 		for (int j = 0; j < myStack.size(); j++)
-			cout << myStack[j] << " ";
+			cout << myStack[j].str << " ";
 		cout << endl;
 	}
 	return true;

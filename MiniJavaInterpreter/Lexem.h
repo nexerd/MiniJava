@@ -11,7 +11,8 @@ enum _lexem_type
 	_string_constatn,
 	_comment,
 	_$b,
-	_$e
+	_$e,
+	_S
 };
 
 string lexems_type[] = {		
@@ -22,7 +23,8 @@ string lexems_type[] = {
 	"string_constatn",
 	"comment",
 	"$b",
-	"$e"
+	"$e",
+	"S"
 };
 
 template<class T>
