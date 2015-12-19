@@ -1,0 +1,52 @@
+﻿Build started 19.12.2015 10:50:14.
+     1>Project "D:\раб стол\моя папка\5 семместр\Формальные языки\MiniJavaInterpreter\MiniJavaInterpreter\MiniJavaInterpreter.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         F:\MS Studio\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(8): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(20): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(23): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(28): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(32): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(52): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(55): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(60): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(63): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(191): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(193): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(285): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(339): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(344): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(370): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(392): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(421): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\tablemaker.h(427): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\lexem.h(39): warning C4114: same type qualifier used more than once
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\lexem.h(40): warning C4114: same type qualifier used more than once
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\lexem.h(41): warning C4114: same type qualifier used more than once
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\lexem.h(42): warning C4114: same type qualifier used more than once
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\lexem.h(43): warning C4114: same type qualifier used more than once
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\lexem.h(44): warning C4114: same type qualifier used more than once
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\lexem.h(45): warning C4114: same type qualifier used more than once
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\lexem.h(46): warning C4114: same type qualifier used more than once
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\lexem.h(47): warning C4114: same type qualifier used more than once
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\lexem.h(48): warning C4114: same type qualifier used more than once
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\recognizer.h(14): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\recognizer.h(19): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\recognizer.h(32): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\recognizer.h(70): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\recognizer.h(295): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\recognizer.h(303): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\recognizer.h(307): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\scanner.h(365): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\recognizer.h(298): warning C4715: 'Recognizer::Recognize' : not all control paths return a value
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\scanner.h(310): warning C4715: 'operator_automatic::recognize' : not all control paths return a value
+     1>d:\раб стол\моя папка\5 семместр\формальные языки\minijavainterpreter\minijavainterpreter\scanner.h(338): warning C4715: 'string_constants_automatic::recognize' : not all control paths return a value
+       Link:
+         F:\MS Studio\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\раб стол\моя папка\5 семместр\Формальные языки\MiniJavaInterpreter\Debug\MiniJavaInterpreter.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\раб стол\моя папка\5 семместр\Формальные языки\MiniJavaInterpreter\Debug\MiniJavaInterpreter.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\раб стол\моя папка\5 семместр\Формальные языки\MiniJavaInterpreter\Debug\MiniJavaInterpreter.lib" /MACHINE:X86 Debug\main.obj
+         MiniJavaInterpreter.vcxproj -> D:\раб стол\моя папка\5 семместр\Формальные языки\MiniJavaInterpreter\Debug\MiniJavaInterpreter.exe
+     1>Done Building Project "D:\раб стол\моя папка\5 семместр\Формальные языки\MiniJavaInterpreter\MiniJavaInterpreter\MiniJavaInterpreter.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.92
