@@ -3,6 +3,7 @@
 #include "Rule.h"
 
 
+vector<rule> oldP;
 
 // Метод заменяющий в правилах все нетерм. символы на "S"
 vector<rule> refreshRules(vector<rule>& P, vector<string>& VN)
@@ -37,7 +38,8 @@ bool compareRules(rule& P, vector<lexem>& str)
 
 // Функция свертки
 void Convolution(vector<lexem>& myStack, vector<rule>& P, vector<string>& VT, int TermHeadOfStak,
-	vector<vector<precedenceRelation>> precedenceTable, vector<int>& numRules)
+	vector<vector<precedenceRelation>> precedenceTable, vector<int>& numRules,
+	vector<vector<lexem>>& ListOfConvulsion)
 {
 	int left = TermHeadOfStak - 1, right = TermHeadOfStak, pos1, pos2 = whatPosition(myStack[right].str_type, VT);
 
@@ -70,22 +72,27 @@ void Convolution(vector<lexem>& myStack, vector<rule>& P, vector<string>& VT, in
 	for (int i = 0; i < P.size(); i++)
 	if (compareRules(P[i], buffer))
 	{
+		ListOfConvulsion.push_back(vector<lexem>(myStack.begin() + left + 1, myStack.end()));
 		// Удаляем основу из стека
 		myStack.erase(myStack.begin() + left + 1, myStack.end());
 		// Пишем в стек леву часть правила - заменили основу
-		myStack.push_back(lexem(P[i].left, _S));
+		myStack.push_back(lexem(P[i].left, P[i].left));
 		// Записываем номер правила
-		numRules.push_back(i + 1);
-		cout << i + 1 << endl;
+		numRules.push_back(i);
+		cout << oldP[i].left << endl;
 		return;
 	}
-
 	// Если неудалось подобрать правила, то ошибка
 	throw exception("Not a rule for this basic!");
 }
 
 struct  Recognizer
 {
+	// Номера правил
+	vector<int> numRules;
+
+	vector<vector<lexem>> ListOfConvulsion;
+
 	string VTFile, VNFile, RuleFile, TablePrecededFile;
 
 	//Стэк
@@ -96,7 +103,7 @@ struct  Recognizer
 	// Мн-во нетерм. симоволов
 	vector<string> VN;
 	// Мно-ва правли грамматики
-	vector<rule> P;
+	vector<rule> P;	
 	
 	// Таблица предшествования
 	vector<vector<precedenceRelation>> precedenceTable;
@@ -133,6 +140,7 @@ Recognizer::Recognizer()
 	VT.push_back("$e");
 	readSymbols(VNFile, VN);
 	readRule();
+	oldP = P;
 	P = refreshRules(P, VN);
 	readPrecededTable();
 }
@@ -227,9 +235,6 @@ void Recognizer::readPrecededTable()
 // Распознание цепочки
 bool Recognizer::Recognize(lexem l)
 {	
-	// Номера правил
-	vector<int> numRules;
-
 	lexem c = l;
 	
 	pos1 = whatPosition(myStack[TermHeadOfStak].str_type, VT);
@@ -277,7 +282,8 @@ bool Recognizer::Recognize(lexem l)
 			case (follow) :
 			{
 							  // Если отношение следует *> - то свертка
-							  Convolution(myStack, P, VT, TermHeadOfStak, precedenceTable, numRules);
+							  Convolution(myStack, P, VT, TermHeadOfStak, precedenceTable, numRules, 
+								  ListOfConvulsion);
 							  // Иещм к последний темр. символ
 							  TermHeadOfStak = myStack.size() - 1;
 							  while (!isFrom(myStack[TermHeadOfStak].str_type, VT))

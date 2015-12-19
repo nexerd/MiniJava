@@ -1,6 +1,8 @@
 #include "TableMaker.h"
 #include "Recognizer.h"
 #include "Scanner.h"
+#include "Builder.h"
+#include<windows.h>
 
 int main()
 {
@@ -8,6 +10,8 @@ int main()
 	TableMaker* myTableMaker;
 	Recognizer* myRecognizer;
 	Scanner* myScanner;
+	Builder* myBuilder;
+	SetConsoleOutputCP(1251);
 	while (true)
 	{
 		cout << "1. Make Preceded Table " << endl;
@@ -29,6 +33,8 @@ int main()
 				  myScanner->work();
 				  myRecognizer = new Recognizer();	
 				  myRecognizer->RecognizeLexems(myScanner->lexemes);
+				  myBuilder = new Builder();
+				  myBuilder->makeProgramm(myRecognizer->ListOfConvulsion, myRecognizer->numRules);
 				  break;
 		}
 		case 0:

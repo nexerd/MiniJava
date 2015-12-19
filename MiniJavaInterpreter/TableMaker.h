@@ -79,10 +79,10 @@ void writeTable(int position1, int position2, precedenceRelation value,
 {
 	// Если таблица по указаному адрему пустая, то запись значения
 	// или совпадает  с записываемым значением.
-	/*cout << r.left << " ";
+	cout << r.left << " ";
 	for (int i = 0; i < r.right.size(); i++)
 		cout << r.right[i] << " ";
-	cout << " : " << VT[position1] << " " << value << " " << VT[position2] << endl;*/
+	cout << " : " << VT[position1] << " " << value << " " << VT[position2] << endl;
 	if (precedenceTable[position1][position2] == empty || precedenceTable[position1][position2] == value)
 	{
 		precedenceTable[position1][position2] = value;
@@ -409,6 +409,7 @@ void TableMaker::createPrecededTable()
 		// Или попытка записть, в заполненую уже клетку табилцы
 		// Значит грамматика не подходит для метода операторного предшествования
 		cout << ex.what() << endl;
+		throw exception(ex);
 	}
 
 	// Допишем в мн-во терм. символов символы начала и концы программы
