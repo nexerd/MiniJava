@@ -1,7 +1,0 @@
-static class MyClass
-{ 
-	int main()
-	{
-		a=a+b;
-	};
-};
