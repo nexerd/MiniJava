@@ -1,0 +1,9 @@
+/Debug
+/MiniJavaInterpreter/Debug
+*.vcxproj
+*vcxproj.*
+*.sdf
+*.sln
+*.suo
+*.opensdf
+MiniJavaInterpreter/ProgrammFile.txt
