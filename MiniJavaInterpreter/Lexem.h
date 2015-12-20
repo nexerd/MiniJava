@@ -13,7 +13,8 @@ enum _lexem_type
 	_$b,
 	_$e,
 	_S,
-	_boolean
+	_boolean,
+	_return
 };
 
 string lexems_type[] = {		
@@ -26,7 +27,8 @@ string lexems_type[] = {
 	"$b",
 	"$e",
 	"S",
-	"boolean"
+	"boolean",
+	"return"
 };
 
 template<class T>
@@ -51,6 +53,7 @@ const string const  main_codeword[] = { "main" };
 const string const  controle_codeword[] = { "if", "else", "for", "while", "switch", "case", "default" };
 const string const  types[] = { "int", "double", "string", "boolean", "long", "void" , "type" };
 const string const  boolean_constant[] = { "true", "false" };
+const string const  return_codeword[] = { "return" };
 
 
 const char semicolon_dividers[] = { ';' };
@@ -176,6 +179,11 @@ struct lexem
 			if (myFindInMas(boolean_constant, 2, str))
 			{
 				str_type = lexems_type[_boolean];
+				return;
+			}
+			if (myFindInMas(return_codeword, 1, str))
+			{
+				str_type = lexems_type[_return];
 				return;
 			}
 			str_type = lexems_type[_identifier];

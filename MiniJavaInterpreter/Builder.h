@@ -19,7 +19,7 @@ struct Builder
 	Context* curContext = NULL;
 	Context* curParametrs = NULL;
 	vector<string> curSequence;
-
+	vector<string> curArgumetLuist;
 	vector<Function> curFuncList; 
 
 	vector<string> buffer;
@@ -79,13 +79,11 @@ struct Builder
 		{
 			if (curParametrs == NULL)
 				curParametrs = new Context();
-			for (int i = 0; i < Stack.size(); i++)
+			if (Stack[0].str_type == "type")
 			{
-				if (Stack[i].str_type == "type")
-				{
-					curParametrs->VarList.push_back(Variable(Stack[i].str, Names.back()));
-					Names.pop_back();
-				}
+				curParametrs->VarList.insert(curParametrs->VarList.begin(),
+					Variable(Stack[0].str, Names.back()));
+				Names.pop_back();
 			}
 			return;
 		}
@@ -118,6 +116,23 @@ struct Builder
 			if (Stack.size() == 1)
 			{
 				Names.push_back(Stack[0].str);
+			}
+			if (Stack.size() == 3)
+			{
+				if (Stack[0].str != "(" && Stack[2].str != ")")
+				{
+					for (int i = curArgumetLuist.size() - 1; i >= 0; i--)
+						curSequence.push_back(curArgumetLuist[i]);
+					char *SizeArgList = new char[1024];
+					_itoa(curArgumetLuist.size(), SizeArgList, 10);
+					curSequence.push_back(SizeArgList);
+					curSequence.push_back(Names.back());
+					Names.pop_back();
+					curSequence.push_back(Names.back());
+					Names.pop_back();
+					curSequence.push_back(Stack[1].str);
+					Names.push_back("$S");
+				}
 			}
 			return;
 		}
@@ -184,11 +199,45 @@ struct Builder
 		}
 		if (leftSymbol == "объ€вление_переменной_класса")
 		{
-			while (Names.back() == "$S")
+			while ( Names.back() == "$S")
 			{
 				Names.pop_back();
 			}
 			curContext->VarList.push_back(Variable(Stack[0].str, Names.back()));
+			Names.pop_back();
+			return;
+		}
+
+		if (leftSymbol == "выражение")
+		{
+			/*while (Names.back() == "$S")
+			{
+				Names.pop_back();
+			}*/
+			if (Stack[1].str_type == "S")
+			{
+				if (Names.back() != "$S")
+				{
+					curSequence.push_back(Names.back());
+					Names.pop_back();
+				}
+			}
+			else 
+				curSequence.push_back(Stack[1].str);
+			curSequence.push_back(Stack[0].str);
+		
+			return;
+		}
+
+		if (leftSymbol == "список_аргументов")
+		{
+			curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
+			Names.pop_back();
+			return;
+		}
+		if (leftSymbol == "вызов_функции")
+		{
+			curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
 			Names.pop_back();
 			return;
 		}

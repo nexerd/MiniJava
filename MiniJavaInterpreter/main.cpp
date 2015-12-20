@@ -15,7 +15,7 @@ int main()
 	while (true)
 	{
 		cout << "1. Make Preceded Table " << endl;
-		cout << "2. Recognize programm " << endl;
+		cout << "2. Build programm " << endl;
 		cout << "0. Exit programm " << endl;
 		cin >> comand;
 		switch (comand)
