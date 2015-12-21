@@ -12,6 +12,7 @@ struct Builder
 	vector<string> Names;
 
 	vector<MyClass> Classes;
+	Function* entryPoint;
 
 
 	MyClass* curClass = NULL;
@@ -115,7 +116,11 @@ struct Builder
 		{
 			if (Stack.size() == 1)
 			{
-				Names.push_back(Stack[0].str);
+				//Names.push_back(Stack[0].str);
+				Names.push_back("$S");
+				curSequence.push_back(Stack[0].str);
+				curSequence.push_back(Stack[0].str_type);
+				curSequence.push_back("$create");
 			}
 			if (Stack.size() == 3)
 			{
@@ -186,6 +191,8 @@ struct Builder
 
 			curFunc->returnValue.type = Stack[0].str;
 			curClass->FuncList.push_back(*curFunc);
+			if (curFunc->name == "main")
+				entryPoint = &curClass->FuncList.back();
 			curFunc = NULL;
 			return;
 		}

@@ -3,6 +3,8 @@
 #include <vector>
 using namespace std;
 
+struct MyClass;
+
 union Value
 {
 	int Integer;
@@ -37,6 +39,12 @@ struct Variable
 
 	Variable() {};
 
+	Variable(string& t,  Value v)
+	{
+		type = t;
+		value = v;
+	}
+
 	Variable(string& t, string& n)
 	{
 		type = t;
@@ -53,477 +61,467 @@ struct Variable
 		return name == n;
 	}
 
-	void operator=(Variable& a)
+	void operator=(Variable* a)
 	{
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			value.Real = double(0.0) + a.value.Integer;
+			value.Real = double(0.0) + a->value.Integer;
 			return;
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			value.Boolean = a.value.Integer != 0;
+			value.Boolean = a->value.Integer != 0;
 			return;
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			value.Integer = 0 + a.value.Boolean;
+			value.Integer = 0 + a->value.Boolean;
 			return;
 		}
-		if (type == a.type)
+		if (type == a->type)
 		{
-			value =  a.value;
+			value =  a->value;
 			return;
 		}
 		throw exception("Type");
 	}
 
-	Variable operator+(Variable& a)
+	Variable* operator+(Variable* a)
 	{
-		if (type == "int" && a.type == "double")
+		if (type == "int" && a->type == "double")
 		{
-			Variable rez(type, string(), Value(value.Integer + a.value.Real));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer + a->value.Real));
+
 		}
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			Variable rez(type, string(), Value(value.Real + a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Real + a->value.Integer));
+			 
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			Variable rez(type, string(), Value(value.Boolean + a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Boolean + a->value.Integer));
+			 
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			Variable rez(type, string(), Value(value.Integer + a.value.Boolean));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer + a->value.Boolean));
+			 
 		}
-		if (type == a.type && type == "int")
+		if (type == a->type && type == "int")
 		{
-			Variable rez(type, string(), Value(value.Integer + a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer + a->value.Integer));
+			 
 		}
-		if (type == a.type && type == "double")
+		if (type == a->type && type == "double")
 		{
-			Variable rez(type, string(), Value(value.Real + a.value.Real));
-			return rez;
+			return new Variable(type, string(), Value(value.Real + a->value.Real));
+			 
 		}
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez(type, string(), Value(value.Boolean + a.value.Boolean));
-			return rez;
+			return new Variable(type, string(), Value(value.Boolean + a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator-(Variable& a)
+	Variable* operator-(Variable* a)
 	{
-		if (type == "int" && a.type == "double")
+		if (type == "int" && a->type == "double")
 		{
-			Variable rez(type, string(), Value(value.Integer - a.value.Real));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer - a->value.Real));
+			 
 		}
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			Variable rez(type, string(), Value(value.Real - a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Real - a->value.Integer));
+			 
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			Variable rez(type, string(), Value(value.Boolean - a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Boolean - a->value.Integer));
+			 
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			Variable rez(type, string(), Value(value.Integer - a.value.Boolean));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer - a->value.Boolean));
+			 
 		}
-		if (type == a.type && type == "int")
+		if (type == a->type && type == "int")
 		{
-			Variable rez(type, string(), Value(value.Integer - a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer - a->value.Integer));
+			 
 		}
-		if (type == a.type && type == "double")
+		if (type == a->type && type == "double")
 		{
-			Variable rez(type, string(), Value(value.Real - a.value.Real));
-			return rez;
+			return new Variable(type, string(), Value(value.Real - a->value.Real));
+			 
 		}
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez(type, string(), Value(value.Boolean - a.value.Boolean));
-			return rez;
+			return new Variable(type, string(), Value(value.Boolean - a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator*(Variable& a)
+	Variable* operator*(Variable* a)
 	{
-		if (type == "int" && a.type == "double")
+		if (type == "int" && a->type == "double")
 		{
-			Variable rez(type, string(), Value(value.Integer * a.value.Real));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer * a->value.Real));
+			 
 		}
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			Variable rez(type, string(), Value(value.Real * a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Real * a->value.Integer));
+			 
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			Variable rez(type, string(), Value(value.Boolean * a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Boolean * a->value.Integer));
+			 
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			Variable rez(type, string(), Value(value.Integer * a.value.Boolean));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer * a->value.Boolean));
+			 
 		}
-		if (type == a.type && type == "int")
+		if (type == a->type && type == "int")
 		{
-			Variable rez(type, string(), Value(value.Integer * a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer * a->value.Integer));
+			 
 		}
-		if (type == a.type && type == "double")
+		if (type == a->type && type == "double")
 		{
-			Variable rez(type, string(), Value(value.Real * a.value.Real));
-			return rez;
+			return new Variable(type, string(), Value(value.Real * a->value.Real));
+			 
 		}
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez(type, string(), Value(value.Boolean * a.value.Boolean));
-			return rez;
+			return new Variable(type, string(), Value(value.Boolean * a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator/(Variable& a)
+	Variable* operator/(Variable* a)
 	{
-		if (type == "int" && a.type == "double")
+		if (type == "int" && a->type == "double")
 		{
-			Variable rez(type, string(), Value(value.Integer / a.value.Real));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer / a->value.Real));
+			 
 		}
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			Variable rez(type, string(), Value(value.Real / a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Real / a->value.Integer));
+			 
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			Variable rez(type, string(), Value(value.Boolean / a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Boolean / a->value.Integer));
+			 
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			Variable rez(type, string(), Value(value.Integer / a.value.Boolean));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer / a->value.Boolean));
+			 
 		}
-		if (type == a.type && type == "int")
+		if (type == a->type && type == "int")
 		{
-			Variable rez(type, string(), Value(value.Integer / a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer / a->value.Integer));
+			 
 		}
-		if (type == a.type && type == "double")
+		if (type == a->type && type == "double")
 		{
-			Variable rez(type, string(), Value(value.Real / a.value.Real));
-			return rez;
+			return new Variable(type, string(), Value(value.Real / a->value.Real));
+			 
 		}
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez(type, string(), Value(value.Boolean / a.value.Boolean));
-			return rez;
+			return new Variable(type, string(), Value(value.Boolean / a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator%(Variable& a)
+	Variable* operator%(Variable* a)
 	{
-		if (type == "int" && a.type == "int")
+		if (type == "int" && a->type == "int")
 		{
-			Variable rez(type, string(), Value(value.Integer % a.value.Integer));
-			return rez;
+			return new Variable(type, string(), Value(value.Integer % a->value.Integer));
+			 
 		}		
 		throw exception("Type");
 	}
 
-	Variable operator%(Variable& a)
+	Variable* operator&&(Variable* a)
 	{
-		if (type == "int" && a.type == "int")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez(type, string(), Value(value.Integer % a.value.Real));
-			return rez;
+			return new Variable(type, string(), Value(value.Boolean && a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator&&(Variable& a)
+	Variable* operator||(Variable* a)
 	{
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez(type, string(), Value(value.Boolean && a.value.Boolean));
-			return rez;
+			return new Variable(type, string(), Value(value.Boolean || a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator||(Variable& a)
-	{
-		if (type == "boolean" && a.type == "boolean")
-		{
-			Variable rez(type, string(), Value(value.Boolean || a.value.Boolean));
-			return rez;
-		}
-		throw exception("Type");
-	}
-
-	Variable operator!()
+	Variable* operator!()
 	{
 		if (type == "boolean")
 		{
-			Variable rez(type, string(), Value(!value.Boolean));
-			return rez;
+			return new Variable(type, string(), Value(!value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator<(Variable& a)
+	Variable* operator<(Variable* a)
 	{
-		if (type == "int" && a.type == "double")
+		if (type == "int" && a->type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Integer < a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer < a->value.Real));
+			 
 		}
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Real < a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real < a->value.Integer));
+			 
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean < a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean < a->value.Integer));
+			 
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Integer < a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer < a->value.Boolean));
+			 
 		}
-		if (type == a.type && type == "int")
+		if (type == a->type && type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Integer < a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer < a->value.Integer));
+			 
 		}
-		if (type == a.type && type == "double")
+		if (type == a->type && type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Real < a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real < a->value.Real));
+			 
 		}
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean < a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean < a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator==(Variable& a)
+	Variable* operator==(Variable* a)
 	{
-		if (type == "int" && a.type == "double")
+		if (type == "int" && a->type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Integer == a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer == a->value.Real));
+			 
 		}
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Real == a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real == a->value.Integer));
+			 
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean == a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean == a->value.Integer));
+			 
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Integer == a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer == a->value.Boolean));
+			 
 		}
-		if (type == a.type && type == "int")
+		if (type == a->type && type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Integer == a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer == a->value.Integer));
+			 
 		}
-		if (type == a.type && type == "double")
+		if (type == a->type && type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Real == a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real == a->value.Real));
+			 
 		}
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean == a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean == a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator>(Variable& a)
+	Variable* operator>(Variable* a)
 	{
-		if (type == "int" && a.type == "double")
+		if (type == "int" && a->type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Integer > a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer > a->value.Real));
+			 
 		}
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Real > a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real > a->value.Integer));
+			 
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean > a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean > a->value.Integer));
+			 
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Integer > a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer > a->value.Boolean));
+			 
 		}
-		if (type == a.type && type == "int")
+		if (type == a->type && type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Integer > a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer > a->value.Integer));
+			 
 		}
-		if (type == a.type && type == "double")
+		if (type == a->type && type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Real > a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real > a->value.Real));
+			 
 		}
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean > a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean > a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator<=(Variable& a)
+	Variable* operator<=(Variable* a)
 	{
-		if (type == "int" && a.type == "double")
+		if (type == "int" && a->type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Integer <= a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer <= a->value.Real));
+			 
 		}
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Real <= a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real <= a->value.Integer));
+			 
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean <= a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean <= a->value.Integer));
+			 
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Integer <= a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer <= a->value.Boolean));
+			 
 		}
-		if (type == a.type && type == "int")
+		if (type == a->type && type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Integer <= a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer <= a->value.Integer));
+			 
 		}
-		if (type == a.type && type == "double")
+		if (type == a->type && type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Real <= a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real <= a->value.Real));
+			 
 		}
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean <= a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean <= a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator!=(Variable& a)
+	Variable* operator!=(Variable* a)
 	{
-		if (type == "int" && a.type == "double")
+		if (type == "int" && a->type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Integer != a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer != a->value.Real));
+			 
 		}
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Real != a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real != a->value.Integer));
+			 
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean != a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean != a->value.Integer));
+			 
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Integer != a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer != a->value.Boolean));
+			 
 		}
-		if (type == a.type && type == "int")
+		if (type == a->type && type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Integer != a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer != a->value.Integer));
+			 
 		}
-		if (type == a.type && type == "double")
+		if (type == a->type && type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Real != a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real != a->value.Real));
+			 
 		}
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean != a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean != a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
 
-	Variable operator>=(Variable& a)
+	Variable* operator>=(Variable* a)
 	{
-		if (type == "int" && a.type == "double")
+		if (type == "int" && a->type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Integer >= a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer >= a->value.Real));
+			 
 		}
-		if (type == "double" && a.type == "int")
+		if (type == "double" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Real >= a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real >= a->value.Integer));
+			 
 		}
-		if (type == "boolean" && a.type == "int")
+		if (type == "boolean" && a->type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean >= a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean >= a->value.Integer));
+			 
 		}
-		if (type == "int" && a.type == "boolean")
+		if (type == "int" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Integer >= a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer >= a->value.Boolean));
+			 
 		}
-		if (type == a.type && type == "int")
+		if (type == a->type && type == "int")
 		{
-			Variable rez("boolean", string(), Value(value.Integer >= a.value.Integer));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Integer >= a->value.Integer));
+			 
 		}
-		if (type == a.type && type == "double")
+		if (type == a->type && type == "double")
 		{
-			Variable rez("boolean", string(), Value(value.Real >= a.value.Real));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Real >= a->value.Real));
+			 
 		}
-		if (type == "boolean" && a.type == "boolean")
+		if (type == "boolean" && a->type == "boolean")
 		{
-			Variable rez("boolean", string(), Value(value.Boolean >= a.value.Boolean));
-			return rez;
+			return new Variable("boolean", string(), Value(value.Boolean >= a->value.Boolean));
+			 
 		}
 		throw exception("Type");
 	}
@@ -541,12 +539,12 @@ struct Context
 		VarList.push_back(a);
 	}
 
-	bool getVariable(string& name, vector<Variable>::iterator* v)
+	bool getVariable(string& name, Variable** v)
 	{
 		vector<Variable>::iterator iter = find(VarList.begin(), VarList.end(), name);
 		if (iter != VarList.end())
 		{
-			*v = iter;
+			*v = &(*iter);
 			return true;
 		}
 		return false;
@@ -561,6 +559,7 @@ struct Function
 	Context Parametrs;
 	vector<string> Sequence;
 	Variable returnValue;
+	MyClass* Obj;
 	Function() {};
 };
 

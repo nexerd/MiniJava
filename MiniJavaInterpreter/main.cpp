@@ -2,6 +2,7 @@
 #include "Recognizer.h"
 #include "Scanner.h"
 #include "Builder.h"
+#include "Executor.h"
 #include<windows.h>
 
 int main()
@@ -11,6 +12,7 @@ int main()
 	Recognizer* myRecognizer;
 	Scanner* myScanner;
 	Builder* myBuilder;
+	Executor* myExecutor;
 	SetConsoleOutputCP(1251);
 	while (true)
 	{
@@ -35,6 +37,8 @@ int main()
 				  myRecognizer->RecognizeLexems(myScanner->lexemes);
 				  myBuilder = new Builder();
 				  myBuilder->makeProgramm(myRecognizer->ListOfConvulsion, myRecognizer->numRules);
+				  myExecutor = new Executor(myBuilder->Classes);
+				  myExecutor->RunProgramm(myBuilder->entryPoint);
 				  break;
 		}
 		case 0:
