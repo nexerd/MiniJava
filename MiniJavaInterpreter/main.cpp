@@ -37,8 +37,8 @@ int main()
 				  myRecognizer->RecognizeLexems(myScanner->lexemes);
 				  myBuilder = new Builder();
 				  myBuilder->makeProgramm(myRecognizer->ListOfConvulsion, myRecognizer->numRules);
-				  myExecutor = new Executor(myBuilder->Classes);
-				  myExecutor->RunProgramm(myBuilder->entryPoint);
+				  myExecutor = new Executor(&myBuilder->Classes);
+				  myExecutor->RunProgramm(&myBuilder->mainObj, myBuilder->entryPoint);
 				  break;
 		}
 		case 0:

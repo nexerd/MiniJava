@@ -559,7 +559,12 @@ struct Function
 	Context Parametrs;
 	vector<string> Sequence;
 	Variable returnValue;
-	MyClass* Obj;
+
+	bool operator==(const string& n) const
+	{
+		return name == n;
+	}
+
 	Function() {};
 };
 
@@ -567,12 +572,26 @@ struct MyClass
 {
 	string name;
 	bool is_static;
+	bool is_create;
 	vector<Function> FuncList;
 	Context ClassContext;
+
+	bool getFunction(string& name, Function** f)
+	{
+		vector<Function>::iterator iter = find(FuncList.begin(), FuncList.end(), name);
+		if (iter != FuncList.end())
+		{
+			*f = &(*iter);
+			return true;
+		}
+		return false;
+
+	}
 
 	MyClass(bool _static, string& n) 
 	{
 		is_static = _static;
+		is_create = false;
 		name = n;
 	};
 

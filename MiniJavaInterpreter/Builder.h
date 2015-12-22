@@ -12,8 +12,11 @@ struct Builder
 	vector<string> Names;
 
 	vector<MyClass> Classes;
-	Function* entryPoint;
 
+	Function* entryPoint;
+	MyClass* mainObj;
+
+	bool is_mainObj;
 
 	MyClass* curClass = NULL;
 	Function* curFunc = NULL;
@@ -122,22 +125,26 @@ struct Builder
 				curSequence.push_back(Stack[0].str_type);
 				curSequence.push_back("$create");
 			}
-			if (Stack.size() == 3)
+			else
 			{
-				if (Stack[0].str != "(" && Stack[2].str != ")")
-				{
-					for (int i = curArgumetLuist.size() - 1; i >= 0; i--)
-						curSequence.push_back(curArgumetLuist[i]);
-					char *SizeArgList = new char[1024];
-					_itoa(curArgumetLuist.size(), SizeArgList, 10);
-					curSequence.push_back(SizeArgList);
-					curSequence.push_back(Names.back());
-					Names.pop_back();
-					curSequence.push_back(Names.back());
-					Names.pop_back();
-					curSequence.push_back(Stack[1].str);
-					Names.push_back("$S");
-				}
+				//if (Stack[0].str != "(" && Stack[2].str != ")")
+				//{
+					
+				//}
+				curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
+				Names.pop_back();
+				for (int i = curArgumetLuist.size() - 1; i >= 0; i--)
+					curSequence.push_back(curArgumetLuist[i]);
+				char *SizeArgList = new char[1024];
+				_itoa(curArgumetLuist.size(), SizeArgList, 10);
+				curSequence.push_back("$function");
+				curSequence.push_back(SizeArgList);
+				curSequence.push_back(Names.back());
+				Names.pop_back();
+				curSequence.push_back(Names.back());
+				Names.pop_back();
+				curSequence.push_back(Stack[1].str);
+				Names.push_back("$S");
 			}
 			return;
 		}
@@ -192,15 +199,24 @@ struct Builder
 			curFunc->returnValue.type = Stack[0].str;
 			curClass->FuncList.push_back(*curFunc);
 			if (curFunc->name == "main")
+			{
 				entryPoint = &curClass->FuncList.back();
+				is_mainObj = true;				
+			}
+
 			curFunc = NULL;
 			return;
 		}
 		if (leftSymbol == "класс")
 		{
-			curClass->ClassContext = *curContext;
+			curClass->ClassContext = *curContext;			
 			curContext = new Context();
-			Classes.push_back(*curClass);
+			Classes.push_back(*curClass);			
+			if (is_mainObj)
+			{
+				is_mainObj = false;
+				mainObj = &Classes.back();
+			}
 			curClass = NULL;
 			return;
 		}
@@ -242,17 +258,18 @@ struct Builder
 			Names.pop_back();
 			return;
 		}
-		if (leftSymbol == "вызов_функции")
+		/*if (leftSymbol == "вызов_функции")
 		{
 			curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
 			Names.pop_back();
 			return;
-		}
+		}*/
 	
 	};
 
 	void makeProgramm(vector<vector<lexem>>& ListOfStack, vector<int>& ListOfNumbers)
 	{
+		is_mainObj = false;
 		for (int i = 0; i < ListOfStack.size(); i++)
 		{
 			makePart(ListOfStack[i], ListOfNumbers[i]);

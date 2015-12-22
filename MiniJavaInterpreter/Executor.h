@@ -3,30 +3,42 @@
 
 struct Executor
 {
-	vector<MyClass> myClasses;
+	vector<MyClass>* myClasses;
 	vector<Function*> FunStack;
 
-	Executor(vector<MyClass>& Classes)
+	Executor(vector<MyClass>* Classes)
 	{
 		myClasses = Classes;		
 	}
 
-	Variable* getVariable(string& name, Function* entryPoint)
+	Variable* getVariable(string& name, MyClass** Obj, Function* entryPoint)
 	{
 		Variable* A;
 		if (!entryPoint->CurContext.getVariable(name, &A))
 		{
 			if (!entryPoint->Parametrs.getVariable(name, &A))
 			{
-				if (!entryPoint->Obj->ClassContext.getVariable(name, &A))
+				if (!(*Obj)->ClassContext.getVariable(name, &A))
+				{
+					for (int i = 0; i < myClasses->size(); i++)
+					{
+						if ((*myClasses)[i].name == name && (*myClasses)[i].is_static)
+						{
+							A->type = "Obj";
+							A->value.Obj = &(*myClasses)[i];
+						}
+					}
+				}
 					throw exception("Name!");
 			}
 		}
 		return A;
 	}
 
-	void RunProgramm(Function* entryPoint)
+	void RunProgramm(MyClass** Obj, Function* entryPoint)
 	{
+		if (!(*Obj)->is_static && !(*Obj)->is_create)
+			throw exception("Object!");
 		FunStack.push_back(entryPoint);
 		vector<Variable*> VarStack;
 		Variable* A;
@@ -192,8 +204,30 @@ struct Executor
 				i += 2;
 				continue;
 			}
-			
-			VarStack.push_back(getVariable( entryPoint->Sequence[i], entryPoint));
+			if (entryPoint->Sequence[i] == "$function")
+			{
+				i += 2;
+			}
+
+			if (entryPoint->Sequence[i] == ".")
+			{
+				Function* nextFun;
+				MyClass* Obj;
+				string nameF = entryPoint->Sequence[i - 2];
+				if (VarStack.back()->type != "MyClass")
+					throw exception("Object!");				
+				Obj = VarStack.back()->value.Obj;
+				Obj->getFunction(nameF, &nextFun);
+				VarStack.pop_back();
+				int countParams = atoi(entryPoint->Sequence[i - 3].c_str());
+				for (int j = 0; j < countParams; j++)
+				{
+					nextFun->Parametrs.VarList[j] = VarStack.back();
+					VarStack.pop_back();
+				}
+				RunProgramm(&Obj, nextFun);
+			}
+			VarStack.push_back(getVariable( entryPoint->Sequence[i], Obj, entryPoint));
 		}
 	
 	}
