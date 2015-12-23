@@ -590,6 +590,7 @@ struct MyClass
 
 	MyClass(bool _static, string& n) 
 	{
+		FuncList.reserve(30);
 		is_static = _static;
 		is_create = false;
 		name = n;

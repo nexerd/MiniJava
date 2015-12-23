@@ -30,6 +30,7 @@ struct Builder
 
 	Builder()
 	{
+		Classes.reserve(200);
 		RuleFile = "RuleFile.txt";
 		readRule();
 	};

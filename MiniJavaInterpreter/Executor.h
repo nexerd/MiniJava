@@ -23,13 +23,16 @@ struct Executor
 					for (int i = 0; i < myClasses->size(); i++)
 					{
 						if ((*myClasses)[i].name == name && (*myClasses)[i].is_static)
-						{
-							A->type = "Obj";
+						{		
+							A = new Variable();
 							A->value.Obj = &(*myClasses)[i];
+							A->type = "Obj";
+							return A;
 						}
 					}
-				}
 					throw exception("Name!");
+				}
+					
 			}
 		}
 		return A;
@@ -206,7 +209,7 @@ struct Executor
 			}
 			if (entryPoint->Sequence[i] == "$function")
 			{
-				i += 2;
+				i += 3;
 			}
 
 			if (entryPoint->Sequence[i] == ".")
@@ -214,7 +217,7 @@ struct Executor
 				Function* nextFun;
 				MyClass* Obj;
 				string nameF = entryPoint->Sequence[i - 2];
-				if (VarStack.back()->type != "MyClass")
+				if (VarStack.back()->type != "Obj")
 					throw exception("Object!");				
 				Obj = VarStack.back()->value.Obj;
 				Obj->getFunction(nameF, &nextFun);
@@ -226,6 +229,16 @@ struct Executor
 					VarStack.pop_back();
 				}
 				RunProgramm(&Obj, nextFun);
+				if (nextFun->returnValue.type != "void")
+					VarStack.push_back(&nextFun->returnValue);
+				continue;
+			}
+			if (entryPoint->Sequence[i] == "return")
+			{
+				A = VarStack.back();
+				VarStack.pop_back();
+				entryPoint->returnValue = A;
+				return;
 			}
 			VarStack.push_back(getVariable( entryPoint->Sequence[i], Obj, entryPoint));
 		}
