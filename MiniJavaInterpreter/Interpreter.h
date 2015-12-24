@@ -45,7 +45,7 @@ struct Interpreter
 			{
 				getline(fin, str);
 				str += '\n';
-				cout << str << endl;
+				//cout << str << endl;
 				for (int i = 0; i < str.size(); i++)
 				if (myScanner->Scan(str[i], i, str.size(), &l))
 				{

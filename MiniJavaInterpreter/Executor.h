@@ -209,35 +209,65 @@ struct Executor
 			}
 			if (entryPoint->Sequence[i] == "$function")
 			{
-				i += 3;
-			}
-
-			if (entryPoint->Sequence[i] == ".")
-			{
 				Function* nextFun;
-				MyClass* Obj;
-				string nameF = entryPoint->Sequence[i - 2];
-				if (VarStack.back()->type != "Obj")
-					throw exception("Object!");				
-				Obj = VarStack.back()->value.Obj;
-				Obj->getFunction(nameF, &nextFun);
+				
+				string nameF = entryPoint->Sequence[i + 2];
+				VarStack.push_back(getVariable(entryPoint->Sequence[i + 3], Obj, entryPoint));
+				
+				MyClass* ObjF;
+				ObjF = VarStack.back()->value.Obj;
+				ObjF->getFunction(nameF, &nextFun);
 				VarStack.pop_back();
-				int countParams = atoi(entryPoint->Sequence[i - 3].c_str());
+				int countParams = atoi(entryPoint->Sequence[i + 1].c_str());
 				for (int j = 0; j < countParams; j++)
 				{
 					nextFun->Parametrs.VarList[j] = VarStack.back();
 					VarStack.pop_back();
 				}
-				RunProgramm(&Obj, nextFun);
+				RunProgramm(&ObjF, nextFun);
 				if (nextFun->returnValue.type != "void")
 					VarStack.push_back(&nextFun->returnValue);
+				i += 3;
+				continue;
+			}
+
+			if (entryPoint->Sequence[i] == "$own_function")
+			{
+				Function* nextFun;
+				string nameF = entryPoint->Sequence[i + 2];
+				(*Obj)->getFunction(nameF, &nextFun);				
+				
+				int countParams = atoi(entryPoint->Sequence[i + 1].c_str());
+				for (int j = 0; j < countParams; j++)
+				{
+					nextFun->Parametrs.VarList[j] = VarStack.back();
+					VarStack.pop_back();
+				}
+				RunProgramm(Obj, nextFun);
+				if (nextFun->returnValue.type != "void")
+					VarStack.push_back(&nextFun->returnValue);
+				i += 2;
+				continue;
+			}
+
+
+			if (entryPoint->Sequence[i] == ".")
+			{
+				VarStack.push_back(getVariable(entryPoint->Sequence[i + 1], Obj, entryPoint));
+				VarStack.back()->value.Obj->ClassContext.getVariable(entryPoint->Sequence[i + 2], &A);
+				VarStack.pop_back();
+				VarStack.push_back(A);	
+				i += 2;
 				continue;
 			}
 			if (entryPoint->Sequence[i] == "return")
 			{
-				A = VarStack.back();
-				VarStack.pop_back();
-				entryPoint->returnValue = A;
+				if (VarStack.size() != 0)
+				{
+					A = VarStack.back();
+					VarStack.pop_back();
+					entryPoint->returnValue = A;
+				}				
 				return;
 			}
 			VarStack.push_back(getVariable( entryPoint->Sequence[i], Obj, entryPoint));

@@ -571,6 +571,7 @@ struct Function
 struct MyClass
 {
 	string name;
+	string type;
 	bool is_static;
 	bool is_create;
 	vector<Function> FuncList;
@@ -586,6 +587,18 @@ struct MyClass
 		}
 		return false;
 
+	}
+
+	MyClass* makeObject(string& n)
+	{
+		if (is_static)
+			throw exception("Is static!");
+		MyClass* Obj = new  MyClass(false, n);
+		Obj->is_create = true;
+		type = name;
+		Obj->FuncList = FuncList;
+		Obj->ClassContext = ClassContext;
+		return Obj;
 	}
 
 	MyClass(bool _static, string& n) 

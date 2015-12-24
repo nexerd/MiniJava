@@ -93,11 +93,11 @@ struct Builder
 			return;
 		}
 
-		if (leftSymbol == "операция_1" || leftSymbol == "операция_2" || leftSymbol == "присваивание"
+		if (leftSymbol == "операция_1" || leftSymbol == "операция_2"
 			|| leftSymbol == "лог_выр1" || leftSymbol == "лог_выр2" || leftSymbol == "лог_выр4"
 			|| leftSymbol == "лог_выр5" || leftSymbol == "лог_выр6")
 		{
-			
+
 			if (Names.size() != 0)
 			{
 				if (Names.back() != "$S")
@@ -116,6 +116,43 @@ struct Builder
 			curSequence.push_back(Stack[1].str);
 			return;
 		}
+		if (leftSymbol == "присваивание")
+		{
+			if (Stack.size() > 3)
+			{
+				curSequence.push_back(".");
+				if (Stack[0].str == "S")
+				{
+					curSequence.push_back(Names.back());
+					Names.pop_back();
+				}
+				else
+					curSequence.push_back(Stack[0].str);
+				string buf = Names.back();
+				Names.pop_back();
+				curSequence.push_back(Names.back());
+				Names.pop_back();
+				Names.push_back(buf);
+				Names.push_back("$S");
+			}
+			if (Names.size() != 0)
+			{
+				if (Names.back() != "$S")
+					buffer.push_back(Names.back());
+				Names.pop_back();
+			}
+			if (Names.size() != 0)
+			{
+				if (Names.back() != "$S")
+					buffer.push_back(Names.back());
+				Names.pop_back();
+			}
+			curSequence.insert(curSequence.end(), buffer.rbegin(), buffer.rend());
+			Names.push_back("$S");
+			buffer.clear();
+			curSequence.push_back("=");
+			return;
+		}
 		if (leftSymbol == "операция_3")
 		{
 			if (Stack.size() == 1)
@@ -132,20 +169,65 @@ struct Builder
 				//{
 					
 				//}
-				curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
-				Names.pop_back();
-				for (int i = curArgumetLuist.size() - 1; i >= 0; i--)
-					curSequence.push_back(curArgumetLuist[i]);
-				char *SizeArgList = new char[1024];
-				_itoa(curArgumetLuist.size(), SizeArgList, 10);
-				curSequence.push_back("$function");
-				curSequence.push_back(SizeArgList);
-				curSequence.push_back(Names.back());
-				Names.pop_back();
-				curSequence.push_back(Names.back());
-				Names.pop_back();
-				curSequence.push_back(Stack[1].str);
-				Names.push_back("$S");
+				if (Stack.size() == 3 && Stack[1].str == ".")
+				{
+					curSequence.push_back(".");
+					if (Stack[0].str == "S")
+					{
+						curSequence.push_back(Names.back());
+						Names.pop_back();
+					}
+					else 
+						curSequence.push_back(Stack[0].str);					
+					curSequence.push_back(Names.back());
+					Names.pop_back();
+					Names.push_back("$S");
+				}
+				else
+				{
+					if (Stack[1].str == ".")
+					{
+						if (Stack[4].str == "S")
+						{
+							curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
+							Names.pop_back();
+						}
+						for (int i = curArgumetLuist.size() - 1; i >= 0; i--)
+							curSequence.push_back(curArgumetLuist[i]);
+						char *SizeArgList = new char[1024];
+						_itoa(curArgumetLuist.size(), SizeArgList, 10);
+						curSequence.push_back("$function");
+						curSequence.push_back(SizeArgList);
+						curSequence.push_back(Names.back());
+						Names.pop_back();
+						if (Stack[0].str == "S")
+						{
+							curSequence.push_back(Names.back());
+							Names.pop_back();
+						}
+						else
+							curSequence.push_back(Stack[0].str);
+						//curSequence.push_back(Stack[1].str);
+						Names.push_back("$S");
+					}
+					else
+					{
+						if (Stack[2].str == "S")
+						{
+							curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
+							Names.pop_back();
+						}
+						for (int i = curArgumetLuist.size() - 1; i >= 0; i--)
+							curSequence.push_back(curArgumetLuist[i]);
+						char *SizeArgList = new char[1024];
+						_itoa(curArgumetLuist.size(), SizeArgList, 10);
+						curSequence.push_back("$own_function");
+						curSequence.push_back(SizeArgList);
+						curSequence.push_back(Names.back());
+						Names.pop_back();
+						Names.push_back("$S");
+					}
+				}
 			}
 			return;
 		}
@@ -227,7 +309,18 @@ struct Builder
 			{
 				Names.pop_back();
 			}
-			curContext->VarList.push_back(Variable(Stack[0].str, Names.back()));
+			if (Stack[0].str != "int" && Stack[0].str != "double" && Stack[0].str != "boolean")
+			{
+				for (int j = 0; j < Classes.size(); j++)
+				if (Stack[0].str == Classes[j].name)
+				{
+					curContext->VarList.push_back(Variable(Stack[0].str, Names.back(),
+						Classes[j].makeObject(Names.back())));
+					break;
+				}
+			}
+			else 
+				curContext->VarList.push_back(Variable(Stack[0].str, Names.back()));
 			Names.pop_back();
 			return;
 		}
