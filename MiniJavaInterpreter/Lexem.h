@@ -76,6 +76,7 @@ struct lexem
 	_lexem_type type;
 	string str_type;
 	vector<int> positions;
+	lexem(){};
 	lexem(string lexem, _lexem_type t)
 	{
 		str = lexem;

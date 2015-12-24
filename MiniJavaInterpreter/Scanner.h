@@ -359,117 +359,124 @@ struct Scanner
 		lexemes.push_back(buff);
 	}
 
-	void recognize(string& str)
+	bool Scan(char c, int& i, int lenght, lexem* l)
 	{
-		str += '\n';
-		for (int i = 0; i < str.length(); ++i)
-		{
-			try{
-				switch (state)
-				{
-				case 0:{
-						   if (FSA_number.recognize(str[i]))
+		try{
+			switch (state)
+			{
+			case 0:{
+					   if (FSA_number.recognize(c))
+					   {
+						   state = 1;
+						   break;
+					   }
+					   if (FSA_string.recognize(c))
+					   {
+						   state = 2;
+						   break;
+					   }
+					   if (FSA_comment.recognize(c))
+					   {
+						   state = 3;
+						   break;
+					   }
+					   if (FSA_operator.recognize(c))
+					   {
+						   state = 4;
+						   break;
+					   }
+					   if (FSA_string_constatns.recognize(c))
+					   {
+						   state = 5;
+						   break;
+					   }
+					   break;
+			}
+			case 1:{
+
+					   if (!FSA_number.recognize(c))
+					   {
+						   --i;
+						   // lexemes.push_back(FSA_number.get_value());
+						   //add_to_lexems_list(FSA_number.get_value());
+						   state = 0;
+						   *l = lexem(FSA_number.get_value());						  
+						   return true;
+					   }
+					   break;
+			}
+			case 2:{
+					   if (!FSA_string.recognize(c))
+					   {
+						   --i;
+						   //lexemes.push_back(FSA_string.get_value());
+						  // add_to_lexems_list(FSA_string.get_value());
+						   state = 0;
+						   *l = lexem(FSA_string.get_value());
+						   return true;
+					   }
+					   break;
+			}
+			case 3:{
+					   if (!FSA_comment.recognize(c))
+					   {
+						   buff = FSA_comment.get_value();
+						   if (buff == "")
 						   {
-							   state = 1;
-							   break;
-						   }
-						   if (FSA_string.recognize(str[i]))
-						   {
-							   state = 2;
-							   break;
-						   }
-						   if (FSA_comment.recognize(str[i]))
-						   {
-							   state = 3;
-							   break;
-						   }
-						   if (FSA_operator.recognize(str[i]))
-						   {
+							   i -= 2;
 							   state = 4;
-							   break;
-						   }
-						   if (FSA_string_constatns.recognize(str[i]))
-						   {
-							   state = 5;
-							   break;
-						   }
-						   break;
-				}
-				case 1:{
-
-						   if (!FSA_number.recognize(str[i]))
-						   {
-							   --i;
-							   // lexemes.push_back(FSA_number.get_value());
-							   add_to_lexems_list(FSA_number.get_value());
-							   state = 0;
-						   }
-						   break;
-				}
-				case 2:{
-						   if (!FSA_string.recognize(str[i]))
-						   {
-							   --i;
-							   //lexemes.push_back(FSA_string.get_value());
-							   add_to_lexems_list(FSA_string.get_value());
-							   state = 0;
-						   }
-						   break;
-				}
-				case 3:{
-						   if (!FSA_comment.recognize(str[i]))
-						   {
-							   buff = FSA_comment.get_value();
-							   if (buff == "")
-							   {
-								   i -= 2;
-								   state = 4;
-							   }
-							   else
-							   {
-								   state = 0;
-								   // lexemes.push_back(lexem(buff, _comment));
-								   add_to_lexems_list(lexem(buff, _comment));
-							   }
-
-						   }
-						   break;
-				}
-				case 4:{
-						   if (!FSA_operator.recognize(str[i]))
-						   {
-							   if (FSA_operator.str.length() == 1)
-								   --i;
-							   //lexemes.push_back(FSA_operator.get_value());
-							   add_to_lexems_list(FSA_operator.get_value());
-							   state = 0;
-						   }
-						   break;
-				}
-				case 5:{
-						   if (!FSA_string_constatns.recognize(str[i]))
-						   {
-							   //lexemes.push_back(lexem(FSA_string_constatns.get_value(), _string_constatn));
-							   add_to_lexems_list(lexem(FSA_string_constatns.get_value(),
-								   _string_constatn));
-							   state = 0;
 						   }
 						   else
-						   if (i == str.length() - 1)
 						   {
-							   throw exception("Expected \" ");
+							   state = 0;
+							   // lexemes.push_back(lexem(buff, _comment));
+							   //add_to_lexems_list(lexem(buff, _comment));
+							   *l = lexem(buff, _comment);
+							   return true;
 						   }
-						   break;
-				}
-				default:
-					break;
-				}
 
+					   }
+					   break;
 			}
-			catch (exception ex)
-			{
-				throw lexical_exception(i, ex.what());
+			case 4:{
+					   if (!FSA_operator.recognize(c))
+					   {
+						   if (FSA_operator.str.length() == 1)
+							   --i;
+						   //lexemes.push_back(FSA_operator.get_value());
+						   // add_to_lexems_list(FSA_operator.get_value());
+						   state = 0;
+						   *l = lexem(FSA_operator.get_value());
+						   return true;
+					   }
+					   break;
 			}
+			case 5:{
+					   if (!FSA_string_constatns.recognize(c))
+					   {
+						   //lexemes.push_back(lexem(FSA_string_constatns.get_value(), _string_constatn));
+						 //  add_to_lexems_list(lexem(FSA_string_constatns.get_value(),
+						//	   _string_constatn));
+						   state = 0;
+						   *l = lexem(FSA_string_constatns.get_value(),
+							   _string_constatn);
+						   return true;
+					   }
+					  else
+					  if (i == lenght- 1)
+					   {
+						   throw exception("Expected \" ");
+					   }
+					   break;
+			}
+			default:
+				break;
+			}
+			return false;
+		}
+		catch (exception ex)
+		{
+			throw lexical_exception(i, ex.what());
 		}
 	}
 
@@ -480,30 +487,5 @@ struct Scanner
 			if (FSA_comment.state != 0)
 				throw lexical_exception(0, "Commend is not closed!");
 		}
-	}
-
-	void work()
-	{
-		string str;		
-		ifstream fin(ProgrammFile);
-		try
-		{
-			while (!fin.eof())
-			{
-				getline(fin, str);
-				cout << str << endl;
-				recognize(str);
-			}
-			check();
-		}
-		catch (lexical_exception& ex)
-		{
-			for (int i = 0; i < ex.position; i++)
-				cout << '.';
-			cout << "^" << endl;
-			cout << "Lexical error!" << endl;
-			cout << ex.what() << endl;
-		}
-		fin.close();
 	}
 };

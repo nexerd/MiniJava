@@ -268,14 +268,4 @@ struct Builder
 	
 	};
 
-	void makeProgramm(vector<vector<lexem>>& ListOfStack, vector<int>& ListOfNumbers)
-	{
-		is_mainObj = false;
-		for (int i = 0; i < ListOfStack.size(); i++)
-		{
-			makePart(ListOfStack[i], ListOfNumbers[i]);
-		}
-	}
-
-
 };

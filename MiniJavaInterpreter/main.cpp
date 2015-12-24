@@ -1,18 +1,21 @@
 #include "TableMaker.h"
-#include "Recognizer.h"
-#include "Scanner.h"
-#include "Builder.h"
 #include "Executor.h"
+#include "Interpreter.h"
 #include<windows.h>
 
 int main()
 {
 	int comand;
 	TableMaker* myTableMaker;
+
 	Recognizer* myRecognizer;
 	Scanner* myScanner;
 	Builder* myBuilder;
+
+	Interpreter* myInterpreter;
+
 	Executor* myExecutor;
+	
 	SetConsoleOutputCP(1251);
 	while (true)
 	{
@@ -31,12 +34,14 @@ int main()
 		}
 		case 2:
 		{
+
 				  myScanner = new Scanner();
-				  myScanner->work();
 				  myRecognizer = new Recognizer();	
-				  myRecognizer->RecognizeLexems(myScanner->lexemes);
 				  myBuilder = new Builder();
-				  myBuilder->makeProgramm(myRecognizer->ListOfConvulsion, myRecognizer->numRules);
+
+				  myInterpreter = new Interpreter(myScanner, myRecognizer, myBuilder);
+				  myInterpreter->work();
+
 				  myExecutor = new Executor(&myBuilder->Classes);
 				  myExecutor->RunProgramm(&myBuilder->mainObj, myBuilder->entryPoint);
 				  break;

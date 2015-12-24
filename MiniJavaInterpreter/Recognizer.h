@@ -2,96 +2,14 @@
 #include "Lexem.h"
 #include "Rule.h"
 
-
-vector<rule> oldP;
-
-// Метод заменяющий в правилах все нетерм. символы на "S"
-vector<rule> refreshRules(vector<rule>& P, vector<string>& VN)
-{
-	vector<rule> newP = P;
-	// Просто для красоты
-	//P.front().left = "S";
-
-	for (int i = 0; i < P.size(); i++)
-	{
-		// Замена левой части правила
-		newP[i].left = "S";
-		// Замена нетрем. символов в парвой части правила
-		for (int j = 0; j < newP[i].right.size(); j++)
-		if (isFrom(newP[i].right[j], VN))
-			newP[i].right[j] = "S";
-	}
-	VN.front() = "S";
-	return newP;
-}
-
-// Функция сравнения правой части правила с цепочкой
-bool compareRules(rule& P, vector<lexem>& str)
-{
-	if (P.right.size() != str.size())
-		return false;
-	for (int i = 0; i < str.size(); i++)
-	if (P.right[i] != str[i].str_type)
-		return false;
-	return true;
-}
-
-// Функция свертки
-void Convolution(vector<lexem>& myStack, vector<rule>& P, vector<string>& VT, int TermHeadOfStak,
-	vector<vector<precedenceRelation>> precedenceTable, vector<int>& numRules,
-	vector<vector<lexem>>& ListOfConvulsion)
-{
-	int left = TermHeadOfStak - 1, right = TermHeadOfStak, pos1, pos2 = whatPosition(myStack[right].str_type, VT);
-
-	// Посик символов составляющих освнову
-	while (left > 0)
-	{
-		if (isFrom(myStack[left].str_type, VT))
-		{
-			// Если этом темр. символ то проверяем отношение предшествоания
-			pos1 = whatPosition(myStack[left].str_type, VT);
-			// Составляем основу для  терм.символов с отношением =*
-			if (precedenceTable[pos1][pos2] == basic)
-			{
-				right = left;
-				pos2 = pos1;
-				--left;
-			}
-			else
-				break;
-
-		}
-		else
-			// Нетерм. символы пропускаем
-			--left;
-	}
-
-	vector<lexem> buffer(myStack.begin() + 1 + left, myStack.end());
-
-	// Подбираем правило
-	for (int i = 0; i < P.size(); i++)
-	if (compareRules(P[i], buffer))
-	{
-		ListOfConvulsion.push_back(vector<lexem>(myStack.begin() + left + 1, myStack.end()));
-		// Удаляем основу из стека
-		myStack.erase(myStack.begin() + left + 1, myStack.end());
-		// Пишем в стек леву часть правила - заменили основу
-		myStack.push_back(lexem(P[i].left, P[i].left));
-		// Записываем номер правила
-		numRules.push_back(i);
-		cout << oldP[i].left << endl;
-		return;
-	}
-	// Если неудалось подобрать правила, то ошибка
-	throw exception("Not a rule for this basic!");
-}
-
 struct  Recognizer
 {
-	// Номера правил
-	vector<int> numRules;
+	vector<rule> oldP;
 
-	vector<vector<lexem>> ListOfConvulsion;
+	// Номера правил
+	int numRule;
+
+	vector<lexem> ListOfConvulsion;
 
 	string VTFile, VNFile, RuleFile, TablePrecededFile;
 
@@ -121,7 +39,14 @@ struct  Recognizer
 
 	Recognizer();
 
-	bool RecognizeLexems(vector<lexem> programm);
+	bool RecognizeLexems(lexem l, vector<lexem>& LexemStack, int& numberRule);
+
+	void Convolution(vector<lexem>& myStack, vector<rule>& P, vector<string>& VT, int TermHeadOfStak,
+		vector<vector<precedenceRelation>> precedenceTable);
+
+	bool compareRules(rule& P, vector<lexem>& str);
+
+	vector<rule> refreshRules(vector<rule>& P, vector<string>& VN);
 };
 
 
@@ -282,8 +207,7 @@ bool Recognizer::Recognize(lexem l)
 			case (follow) :
 			{
 							  // Если отношение следует *> - то свертка
-							  Convolution(myStack, P, VT, TermHeadOfStak, precedenceTable, numRules, 
-								  ListOfConvulsion);
+							  Convolution(myStack, P, VT, TermHeadOfStak, precedenceTable);
 							  // Иещм к последний темр. символ
 							  TermHeadOfStak = myStack.size() - 1;
 							  while (!isFrom(myStack[TermHeadOfStak].str_type, VT))
@@ -304,20 +228,93 @@ bool Recognizer::Recognize(lexem l)
 	cout << endl;
 }
 
-bool Recognizer::RecognizeLexems(vector<lexem> programm)
+bool Recognizer::RecognizeLexems(lexem l, vector<lexem>& LexemStack, int& numberRule)
 {
-	programm.push_back(lexem("$e", _$e));
-	for (int i = 0; i < programm.size(); i++)
+	for (int j = 0; j < myStack.size(); j++)
+		cout << myStack[j].str << " ";
+	cout << endl;
+	bool rezult = Recognize(l);
+	LexemStack = ListOfConvulsion;
+	numberRule = numRule;
+	return rezult;
+}
+
+// Функция свертки
+void Recognizer::Convolution(vector<lexem>& myStack, vector<rule>& P, vector<string>& VT, int TermHeadOfStak,
+	vector<vector<precedenceRelation>> precedenceTable)
+{
+	int left = TermHeadOfStak - 1, right = TermHeadOfStak, pos1, pos2 = whatPosition(myStack[right].str_type, VT);
+
+	// Посик символов составляющих освнову
+	while (left > 0)
 	{
-		while ((!Recognize(programm[i])))
+		if (isFrom(myStack[left].str_type, VT))
 		{
-			for (int j = 0; j < myStack.size(); j++)
-				cout << myStack[j].str << " ";
-			cout << endl;
+			// Если этом темр. символ то проверяем отношение предшествоания
+			pos1 = whatPosition(myStack[left].str_type, VT);
+			// Составляем основу для  терм.символов с отношением =*
+			if (precedenceTable[pos1][pos2] == basic)
+			{
+				right = left;
+				pos2 = pos1;
+				--left;
+			}
+			else
+				break;
+
 		}
-		for (int j = 0; j < myStack.size(); j++)
-			cout << myStack[j].str << " ";
-		cout << endl;
+		else
+			// Нетерм. символы пропускаем
+			--left;
 	}
+
+	vector<lexem> buffer(myStack.begin() + 1 + left, myStack.end());
+
+	// Подбираем правило
+	for (int i = 0; i < P.size(); i++)
+	if (compareRules(P[i], buffer))
+	{
+		ListOfConvulsion = vector<lexem>(myStack.begin() + left + 1, myStack.end());
+		// Удаляем основу из стека
+		myStack.erase(myStack.begin() + left + 1, myStack.end());
+		// Пишем в стек леву часть правила - заменили основу
+		myStack.push_back(lexem(P[i].left, P[i].left));
+		// Записываем номер правила
+		numRule = i;
+		cout << oldP[i].left << endl;
+		return;
+	}
+	// Если неудалось подобрать правила, то ошибка
+	throw exception("Not a rule for this basic!");
+}
+
+// Метод заменяющий в правилах все нетерм. символы на "S"
+vector<rule>  Recognizer::refreshRules(vector<rule>& P, vector<string>& VN)
+{
+	vector<rule> newP = P;
+	// Просто для красоты
+	//P.front().left = "S";
+
+	for (int i = 0; i < P.size(); i++)
+	{
+		// Замена левой части правила
+		newP[i].left = "S";
+		// Замена нетрем. символов в парвой части правила
+		for (int j = 0; j < newP[i].right.size(); j++)
+		if (isFrom(newP[i].right[j], VN))
+			newP[i].right[j] = "S";
+	}
+	VN.front() = "S";
+	return newP;
+}
+
+// Функция сравнения правой части правила с цепочкой
+bool  Recognizer::compareRules(rule& P, vector<lexem>& str)
+{
+	if (P.right.size() != str.size())
+		return false;
+	for (int i = 0; i < str.size(); i++)
+	if (P.right[i] != str[i].str_type)
+		return false;
 	return true;
 }
