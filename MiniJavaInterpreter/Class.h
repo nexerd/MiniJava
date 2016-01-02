@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <iostream>
 using namespace std;
 
 struct MyClass;
@@ -50,12 +51,14 @@ struct Variable
 		type = t;
 		name = n;
 	}
+
 	Variable(string t, string n, Value v)
 	{
 		type = t;
 		name = n;
 		value = v;
 	}
+
 	bool operator==(const string& n) const
 	{
 		return name == n;
@@ -524,6 +527,46 @@ struct Variable
 			 
 		}
 		throw exception("Type");
+	}
+
+	void input()
+	{
+		if (type == "int")
+		{
+			cin >> value.Integer;
+			return;
+		}
+		if (type == "boolean")
+		{
+			cin >> value.Boolean;
+			return;
+		}
+		if (type == "double")
+		{
+			cin >> value.Real;
+			return;
+		}
+		throw exception("Type!");		
+	}
+
+	void output()
+	{
+		if (type == "int")
+		{
+			cout << value.Integer << endl;
+			return;
+		}
+		if (type == "boolean")
+		{
+			cout << value.Boolean << endl;
+			return;
+		}
+		if (type == "double")
+		{
+			cout << value.Real << endl;
+			return;
+		}
+		throw exception("Type!");
 	}
 };
 

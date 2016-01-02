@@ -1,5 +1,5 @@
+#pragma once
 #include "Class.h"
-
 
 struct Executor
 {
@@ -269,6 +269,20 @@ struct Executor
 					entryPoint->returnValue = A;
 				}				
 				return;
+			}
+			if (entryPoint->Sequence[i] == "$input")
+			{
+				A = VarStack.back();
+				VarStack.pop_back();
+				A->input();
+				continue;
+			}
+			if (entryPoint->Sequence[i] == "$output")
+			{
+				A = VarStack.back();
+				VarStack.pop_back();
+				A->output();
+				continue;
 			}
 			VarStack.push_back(getVariable( entryPoint->Sequence[i], Obj, entryPoint));
 		}

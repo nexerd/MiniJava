@@ -119,8 +119,18 @@ struct Builder
 		if (leftSymbol == "присваивание")
 		{
 			if (Stack.size() > 3)
-			{
+			{			
+				if (Names.back() != "$S")
+				{
+					curSequence.push_back(Names.back());					
+				}
+				Names.pop_back();		
+
+				string buf = Names.back();
+				Names.pop_back();
+
 				curSequence.push_back(".");
+
 				if (Stack[0].str == "S")
 				{
 					curSequence.push_back(Names.back());
@@ -128,11 +138,9 @@ struct Builder
 				}
 				else
 					curSequence.push_back(Stack[0].str);
-				string buf = Names.back();
-				Names.pop_back();
-				curSequence.push_back(Names.back());
-				Names.pop_back();
-				Names.push_back(buf);
+
+				curSequence.push_back(buf);
+
 				Names.push_back("$S");
 			}
 			if (Names.size() != 0)
@@ -171,14 +179,17 @@ struct Builder
 				//}
 				if (Stack.size() == 3 && Stack[1].str == ".")
 				{
-					curSequence.push_back(".");
+					curSequence.push_back(".");					
 					if (Stack[0].str == "S")
 					{
+						string buf = Names.back();
+						Names.pop_back();
 						curSequence.push_back(Names.back());
 						Names.pop_back();
+						Names.push_back(buf);
 					}
 					else 
-						curSequence.push_back(Stack[0].str);					
+						curSequence.push_back(Stack[0].str);	
 					curSequence.push_back(Names.back());
 					Names.pop_back();
 					Names.push_back("$S");
@@ -305,7 +316,7 @@ struct Builder
 		}
 		if (leftSymbol == "объ€вление_переменной_класса")
 		{
-			while ( Names.back() == "$S")
+			while (Names.size() > 0 && Names.back() == "$S")
 			{
 				Names.pop_back();
 			}
@@ -350,6 +361,65 @@ struct Builder
 		{
 			curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
 			Names.pop_back();
+			return;
+		}
+
+		if (leftSymbol == "ввод")
+		{			
+			if (Stack.size() == 2)
+			{
+				curSequence.push_back(Names.back());
+				Names.pop_back();				
+			}	
+			else
+			{
+				curSequence.push_back(".");
+				if (Stack[1].str == "S")
+				{
+					string buf = Names.back();
+					Names.pop_back();
+					curSequence.push_back(Names.back());
+					Names.pop_back();
+					Names.push_back(buf);
+
+				}
+				else
+					curSequence.push_back(Stack[1].str);
+				curSequence.push_back(Names.back());
+				Names.pop_back();
+				
+			}
+			curSequence.push_back("$input");
+			Names.push_back("$S");
+			return;
+		}
+		if (leftSymbol == "вывод")
+		{
+			if (Stack.size() == 2)
+			{
+				curSequence.push_back(Names.back());
+				Names.pop_back();
+			}
+			else
+			{
+				curSequence.push_back(".");
+				if (Stack[1].str == "S")
+				{
+					string buf = Names.back();
+					Names.pop_back();
+					curSequence.push_back(Names.back());
+					Names.pop_back();
+					Names.push_back(buf);
+
+				}
+				else
+					curSequence.push_back(Stack[1].str);
+				curSequence.push_back(Names.back());
+				Names.pop_back();
+				
+			}
+			curSequence.push_back("$output");
+			Names.push_back("$S");
 			return;
 		}
 		/*if (leftSymbol == "вызов_функции")
