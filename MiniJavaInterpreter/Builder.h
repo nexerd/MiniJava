@@ -29,6 +29,7 @@ struct Builder
 	vector<string> buffer;
 
 	vector<int> curPoint;
+	vector<int> countPoint;
 
 	Builder()
 	{
@@ -243,22 +244,25 @@ struct Builder
 						curPoint.push_back(curSequence.size());
 					}
 					else
-					{						
-						if (Stack[2].str == "S")
+					{
+						if (Stack[0].str != "(")
 						{
-							curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
+							if (Stack[2].str == "S")
+							{
+								curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
+								Names.pop_back();
+							}
+							for (int i = curArgumetLuist.size() - 1; i >= 0; i--)
+								curSequence.push_back(curArgumetLuist[i]);
+							char *SizeArgList = new char[1024];
+							_itoa(curArgumetLuist.size(), SizeArgList, 10);
+							curSequence.push_back("$own_function");
+							curSequence.push_back(SizeArgList);
+							curSequence.push_back(Names.back());
 							Names.pop_back();
+							Names.push_back("$S");
+							curPoint.push_back(curSequence.size());
 						}
-						for (int i = curArgumetLuist.size() - 1; i >= 0; i--)
-							curSequence.push_back(curArgumetLuist[i]);
-						char *SizeArgList = new char[1024];
-						_itoa(curArgumetLuist.size(), SizeArgList, 10);
-						curSequence.push_back("$own_function");
-						curSequence.push_back(SizeArgList);
-						curSequence.push_back(Names.back());
-						Names.pop_back();
-						Names.push_back("$S");
-						curPoint.push_back(curSequence.size());
 					}
 				}
 			}
@@ -282,12 +286,7 @@ struct Builder
 			}
 			return;
 		}
-		if (leftSymbol == "блок_функции")
-		{
-			//curFunc->Sequence = curSequence;
-			//curSequence.clear();
-			return;
-		}
+		
 		if (leftSymbol == "функция")
 		{
 			curFunc = new Function();
@@ -452,12 +451,47 @@ struct Builder
 
 		if (leftSymbol == "оператор_условия")
 		{
-			Names.push_back("$if");
+			//curPoint.push_back(curSequence.size());
+			//countPoint = 0;
+			//Names.push_back("$if");
+			countPoint.push_back(0);
 			return;
 		}
 
 		if (leftSymbol == "условие")
 		{
+			//++countPoint;
+			int num = curPoint.size() - countPoint.back() - 1, posInsert = curPoint[num];
+			curSequence.insert(curSequence.begin() + posInsert, "$JMP");
+			char *PositionToJump = new char[1024];
+			_itoa(curPoint.back() + 2, PositionToJump, 10);
+			curSequence.insert(curSequence.begin() + posInsert + 1, PositionToJump);
+			countPoint.pop_back();
+
+			for (int j = num + 1; j < curPoint.size(); j++)
+				curPoint[j] += 2;
+
+			curPoint.erase(curPoint.begin() + num);
+			return;
+		}
+
+		if (leftSymbol == "полное_условие")
+		{
+			//countPoint = 3;
+		}
+
+		if (leftSymbol == "программа")
+		{
+			if (countPoint.size() != 0)
+				++countPoint.back();
+			return;
+		}
+
+		if (leftSymbol == "блок_функции")
+		{
+		//	--countPoint;
+			//curFunc->Sequence = curSequence;
+			//curSequence.clear();
 			return;
 		}
 		/*if (leftSymbol == "вызов_функции")

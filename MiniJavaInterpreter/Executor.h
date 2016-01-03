@@ -201,8 +201,9 @@ struct Executor
 				}
 				if (entryPoint->Sequence[i + 1] == "boolean")
 				{
-					VarStack.push_back(new Variable(entryPoint->Sequence[i],
-						Value("true" == entryPoint->Sequence[i + 1])));
+					type = "boolean";
+					VarStack.push_back(new Variable(type,
+						Value("true" == entryPoint->Sequence[i])));
 				}
 				i += 2;
 				continue;
@@ -282,6 +283,16 @@ struct Executor
 				A = VarStack.back();
 				VarStack.pop_back();
 				A->output();
+				continue;
+			}
+			if (entryPoint->Sequence[i] == "$JMP")
+			{
+				A = VarStack.back();
+				VarStack.pop_back();
+				if (!A->value.Boolean)
+					i = atoi(entryPoint->Sequence[i + 1].c_str()) - 1;
+				else
+					++i;
 				continue;
 			}
 			VarStack.push_back(getVariable( entryPoint->Sequence[i], Obj, entryPoint));
