@@ -28,6 +28,8 @@ struct Builder
 
 	vector<string> buffer;
 
+	vector<int> curPoint;
+
 	Builder()
 	{
 		Classes.reserve(200);
@@ -102,18 +104,27 @@ struct Builder
 			{
 				if (Names.back() != "$S")
 					buffer.push_back(Names.back());
+				else 
+					curPoint.pop_back();
 				Names.pop_back();
+				
 			}
 			if (Names.size() != 0)
 			{
 				if (Names.back() != "$S")
 					buffer.push_back(Names.back());
+				else
+					curPoint.pop_back();
 				Names.pop_back();
+					
 			}
+			
 			curSequence.insert(curSequence.end(), buffer.rbegin(), buffer.rend());
 			Names.push_back("$S");
+		
 			buffer.clear();
 			curSequence.push_back(Stack[1].str);
+			curPoint.push_back(curSequence.size());			
 			return;
 		}
 		if (leftSymbol == "присваивание")
@@ -129,11 +140,12 @@ struct Builder
 				string buf = Names.back();
 				Names.pop_back();
 
+				
 				curSequence.push_back(".");
-
+				curPoint.push_back(curSequence.size());
 				if (Stack[0].str == "S")
 				{
-					curSequence.push_back(Names.back());
+					curSequence.push_back(Names.back());					
 					Names.pop_back();
 				}
 				else
@@ -147,18 +159,24 @@ struct Builder
 			{
 				if (Names.back() != "$S")
 					buffer.push_back(Names.back());
+				else 
+					curPoint.pop_back();
 				Names.pop_back();
 			}
 			if (Names.size() != 0)
 			{
 				if (Names.back() != "$S")
 					buffer.push_back(Names.back());
+				else
+					curPoint.pop_back();
 				Names.pop_back();
 			}
+			
 			curSequence.insert(curSequence.end(), buffer.rbegin(), buffer.rend());
 			Names.push_back("$S");
 			buffer.clear();
 			curSequence.push_back("=");
+			curPoint.push_back(curSequence.size());
 			return;
 		}
 		if (leftSymbol == "операция_3")
@@ -166,10 +184,11 @@ struct Builder
 			if (Stack.size() == 1)
 			{
 				//Names.push_back(Stack[0].str);
-				Names.push_back("$S");
+				Names.push_back("$S");				
 				curSequence.push_back(Stack[0].str);
 				curSequence.push_back(Stack[0].str_type);
 				curSequence.push_back("$create");
+				curPoint.push_back(curSequence.size());
 			}
 			else
 			{
@@ -178,7 +197,7 @@ struct Builder
 					
 				//}
 				if (Stack.size() == 3 && Stack[1].str == ".")
-				{
+				{					
 					curSequence.push_back(".");					
 					if (Stack[0].str == "S")
 					{
@@ -193,11 +212,12 @@ struct Builder
 					curSequence.push_back(Names.back());
 					Names.pop_back();
 					Names.push_back("$S");
+					curPoint.push_back(curSequence.size());
 				}
 				else
 				{
 					if (Stack[1].str == ".")
-					{
+					{						
 						if (Stack[4].str == "S")
 						{
 							curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
@@ -220,9 +240,10 @@ struct Builder
 							curSequence.push_back(Stack[0].str);
 						//curSequence.push_back(Stack[1].str);
 						Names.push_back("$S");
+						curPoint.push_back(curSequence.size());
 					}
 					else
-					{
+					{						
 						if (Stack[2].str == "S")
 						{
 							curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
@@ -237,6 +258,7 @@ struct Builder
 						curSequence.push_back(Names.back());
 						Names.pop_back();
 						Names.push_back("$S");
+						curPoint.push_back(curSequence.size());
 					}
 				}
 			}
@@ -245,14 +267,16 @@ struct Builder
 		if (leftSymbol == "лог_выр3")
 		{
 			if (Stack.size() == 2)
-			{
+			{				
 				if (Names.size() != 0)
 				{
 					if (Names.back() != "$S")
 						curSequence.push_back(Names.back());
+					else
+						curPoint.pop_back();
 					Names.pop_back();
 					Names.push_back("$S");
-
+					curPoint.push_back(curSequence.size());
 				}
 				curSequence.push_back(Stack[0].str);
 			}
@@ -299,6 +323,7 @@ struct Builder
 			}
 
 			curFunc = NULL;
+			curPoint.clear();
 			return;
 		}
 		if (leftSymbol == "класс")
@@ -388,9 +413,10 @@ struct Builder
 				curSequence.push_back(Names.back());
 				Names.pop_back();
 				
-			}
+			}			
 			curSequence.push_back("$input");
 			Names.push_back("$S");
+			curPoint.push_back(curSequence.size());
 			return;
 		}
 		if (leftSymbol == "вывод")
@@ -417,9 +443,21 @@ struct Builder
 				curSequence.push_back(Names.back());
 				Names.pop_back();
 				
-			}
+			}			
 			curSequence.push_back("$output");
 			Names.push_back("$S");
+			curPoint.push_back(curSequence.size());
+			return;
+		}
+
+		if (leftSymbol == "оператор_условия")
+		{
+			Names.push_back("$if");
+			return;
+		}
+
+		if (leftSymbol == "условие")
+		{
 			return;
 		}
 		/*if (leftSymbol == "вызов_функции")
