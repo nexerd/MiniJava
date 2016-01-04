@@ -208,6 +208,29 @@ struct Executor
 				i += 2;
 				continue;
 			}
+			if (entryPoint->Sequence[i] == "$create")
+			{
+				string type;
+				if (entryPoint->Sequence[i - 1] == "integer")
+				{
+					type = "int";
+					VarStack.push_back(new Variable(type,
+						Value(atoi(entryPoint->Sequence[i - 2].c_str()))));
+				}
+				if (entryPoint->Sequence[i - 1] == "real")
+				{
+					type = "double";
+					VarStack.push_back(new Variable(type,
+						Value(atof(entryPoint->Sequence[i - 2].c_str()))));
+				}
+				if (entryPoint->Sequence[i - 1] == "boolean")
+				{
+					type = "boolean";
+					VarStack.push_back(new Variable(type,
+						Value("true" == entryPoint->Sequence[i - 2])));
+				}
+				continue;
+			}
 			if (entryPoint->Sequence[i] == "$function")
 			{
 				Function* nextFun;

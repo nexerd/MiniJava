@@ -94,11 +94,11 @@ struct Builder
 		char *PositionToJump = new char[1024];
 		for (int i = 0; i < curSequence.size(); i++)
 		{
-			if (curSequence[i] == "$JMP")
+			if (curSequence[i] == "$JMP" || curSequence[i] == "$JMP_true")
 			{
 				num = atoi(curSequence[i + 1].c_str());
-				if (num >= p)
-				{
+				if (num >= p && curSequence[i] == "$JMP" || num > p && curSequence[i] == "$JMP_true")
+				{					
 					num += 2;
 					_itoa(num, PositionToJump, 10);					
 					curSequence[i + 1] = PositionToJump;
@@ -107,7 +107,7 @@ struct Builder
 		}
 		for (int i = 0; i < curPoint.size(); i++)
 		{
-			if (curPoint[i] > p - 2)
+			if (curPoint[i] > p)
 				curPoint[i] += 2;
 		}
 	}
