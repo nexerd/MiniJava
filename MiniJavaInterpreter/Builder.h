@@ -29,7 +29,7 @@ struct Builder
 	vector<string> buffer;
 
 	vector<int> curPoint;
-	vector<int> countPoint;
+	int countPoint = 0;
 
 	Builder()
 	{
@@ -454,36 +454,46 @@ struct Builder
 			//curPoint.push_back(curSequence.size());
 			//countPoint = 0;
 			//Names.push_back("$if");
-			countPoint.push_back(0);
+			//countPoint.push_back(0);
 			return;
+
+
 		}
 
 		if (leftSymbol == "условие")
 		{
 			//++countPoint;
-			int num = curPoint.size() - countPoint.back() - 1, posInsert = curPoint[num];
+			int num = curPoint.size() - countPoint, posInsert = curPoint[num];
 			curSequence.insert(curSequence.begin() + posInsert, "$JMP");
 			char *PositionToJump = new char[1024];
 			_itoa(curPoint.back() + 2, PositionToJump, 10);
 			curSequence.insert(curSequence.begin() + posInsert + 1, PositionToJump);
-			countPoint.pop_back();
-
-			for (int j = num + 1; j < curPoint.size(); j++)
-				curPoint[j] += 2;
-
-			curPoint.erase(curPoint.begin() + num);
+			
+			countPoint = 0;			
+			curPoint.erase(curPoint.begin() + num, curPoint.end() - 1);
+			++countPoint;
 			return;
 		}
 
 		if (leftSymbol == "полное_условие")
 		{
 			//countPoint = 3;
+			int num = curPoint.size() - countPoint, posInsert = curPoint[num];
+			curSequence.insert(curSequence.begin() + posInsert, "$JMP");
+			char *PositionToJump = new char[1024];
+			_itoa(curPoint.back() + 2, PositionToJump, 10);
+			curSequence.insert(curSequence.begin() + posInsert + 1, PositionToJump);
+			//countPoint.pop_back();
+
+			countPoint = 0;
+			curPoint.erase(curPoint.begin() + num, curPoint.end() - 1);
+			++countPoint;
+			return;
 		}
 
 		if (leftSymbol == "программа")
 		{
-			if (countPoint.size() != 0)
-				++countPoint.back();
+			countPoint++;
 			return;
 		}
 
