@@ -178,7 +178,7 @@ struct Builder
 					
 			}
 			
-			curSequence.insert(curSequence.begin() + dif, buffer.rbegin(), buffer.rend());
+			curSequence.insert(curSequence.begin() + dif, buffer.begin(), buffer.end());
 			Names.push_back("$S");
 		
 			buffer.clear();
@@ -188,20 +188,24 @@ struct Builder
 		}
 		if (leftSymbol == "присваивание")
 		{
+			bool is_swap = false;
 			if (Stack.size() > 3)
 			{			
-				if (Names.back() != "$S")
+				vector<string> bufS;
+				while (Names.back() == "$S")
 				{
-					curSequence.push_back(Names.back());					
+					bufS.push_back("$S");
+					Names.pop_back();
+					is_swap = true;
 				}
-				Names.pop_back();		
+					
 
 				string buf = Names.back();
 				Names.pop_back();
 
 				
 				curSequence.push_back(".");
-				curPoint.push_back(curSequence.size());
+				
 				if (Stack[0].str == "S")
 				{
 					curSequence.push_back(Names.back());					
@@ -212,7 +216,9 @@ struct Builder
 
 				curSequence.push_back(buf);
 
+				Names.insert(Names.end(), bufS.begin(), bufS.end());
 				Names.push_back("$S");
+				curPoint.push_back(curSequence.size());
 			}
 			int dif = curSequence.size();
 			if (Names.size() != 0)
@@ -222,7 +228,7 @@ struct Builder
 				else
 				{
 					curPoint.pop_back();
-					dif = curPoint.back();
+					dif = curPoint.size() ? curPoint.back() : 0;
 				}
 				Names.pop_back();
 
@@ -238,14 +244,23 @@ struct Builder
 						curSequence.begin() + curPoint.back(),
 						curSequence.begin() + dif);
 					curSequence.erase(curSequence.begin() + curPoint.back(), curSequence.begin() + dif);*/
-					dif = 0;
+					if (!is_swap)
+						dif = 0;
+					else
+					{
+						int diff = curPoint.size() != 0 ? curPoint.back() : 0;
+						buffer.insert(buffer.begin(),
+							curSequence.begin() + diff,
+							curSequence.begin() + dif);
+						curSequence.erase(curSequence.begin() + diff, curSequence.begin() + dif);
+					}
 
 				}
 				Names.pop_back();
 
 			}
 
-			curSequence.insert(curSequence.begin() + dif, buffer.rbegin(), buffer.rend());
+			curSequence.insert(curSequence.begin() + dif, buffer.begin(), buffer.end());
 			Names.push_back("$S");
 
 			buffer.clear();

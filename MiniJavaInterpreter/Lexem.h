@@ -59,6 +59,7 @@ const string const  types[] = { "int", "double", "string", "boolean", "long", "v
 const string const  boolean_constant[] = { "true", "false" };
 const string const  return_codeword[] = { "return" };
 const string const  io_codeword[] = { "input", "output" };
+const string const  new_codeword[] = { "new" };
 
 
 const char semicolon_dividers[] = { ';' };
@@ -193,6 +194,11 @@ struct lexem
 				return;
 			}
 			if (myFindInMas(io_codeword, 2, str))
+			{
+				str_type = str;
+				return;
+			}
+			if (myFindInMas(new_codeword, 1, str))
 			{
 				str_type = str;
 				return;

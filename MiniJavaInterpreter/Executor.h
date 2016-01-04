@@ -44,8 +44,7 @@ struct Executor
 		{
 			if ((*myClasses)[i].name == type)
 			{
-				string name = "";
-				return new Variable(name, *((*myClasses)[i].makeObject()));
+				return new Variable(type, *((*myClasses)[i].makeObject()));
 			}
 		}
 		throw exception("Name!");
@@ -242,6 +241,7 @@ struct Executor
 					VarStack.push_back(new Variable(type,
 						Value("true" == entryPoint->Sequence[i - 2])));
 				}
+				//i += 2;
 				continue;
 			}
 			if (entryPoint->Sequence[i] == "$function")
@@ -339,6 +339,7 @@ struct Executor
 			if (entryPoint->Sequence[i + 1] == "$create_obj")
 			{
 				VarStack.push_back(createObj(entryPoint->Sequence[i]));
+				i++;
 				continue;
 			}
 			if (entryPoint->Sequence[i] == "$create_obj")
