@@ -550,6 +550,7 @@ struct Builder
 			//countPoint = 0;
 			//Names.push_back("$if");
 			//countPoint.push_back(0);
+			countPoint = 1;
 			return;
 
 
