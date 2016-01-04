@@ -30,6 +30,7 @@ struct Builder
 
 	vector<int> curPoint;
 	int countPoint = 0;
+	vector<pair<int, int>> curJumps;
 
 	Builder()
 	{
@@ -63,6 +64,52 @@ struct Builder
 			}
 		}
 		fin.close();
+	}
+
+	void correctSequence()
+	{
+		for (int i = 0; i < curJumps.size(); i++)
+		{
+			for (int j = 0; j < curJumps.size(); j++)
+			{
+				if (curJumps[j].first > curJumps[i].first)
+					curJumps[j].first += 2;
+				if (curJumps[j].second > curJumps[i].first)
+					curJumps[j].second += 2;
+			}
+		}
+		char *PositionToJump = new char[1024];
+		for (int i = 0; i < curJumps.size(); i++)
+		{
+			_itoa(curJumps[i].second, PositionToJump, 10);
+			curSequence.insert(curSequence.begin() + curJumps[i].first, "$JMP");
+			curSequence.insert(curSequence.begin() + curJumps[i].first + 1, PositionToJump);
+		}
+
+	}
+
+	void correctSequence2(int p)
+	{
+		int num;
+		char *PositionToJump = new char[1024];
+		for (int i = 0; i < curSequence.size(); i++)
+		{
+			if (curSequence[i] == "$JMP")
+			{
+				num = atoi(curSequence[i + 1].c_str());
+				if (num >= p)
+				{
+					num += 2;
+					_itoa(num, PositionToJump, 10);					
+					curSequence[i + 1] = PositionToJump;
+				}
+			}
+		}
+		for (int i = 0; i < curPoint.size(); i++)
+		{
+			if (curPoint[i] > p - 2)
+				curPoint[i] += 2;
+		}
 	}
 
 	void makePart(vector<lexem>& Stack, int& numberOfRule)
@@ -291,8 +338,12 @@ struct Builder
 		{
 			curFunc = new Function();
 
+			//correctSequence();			
+
 			curFunc->Sequence = curSequence;
 			curSequence.clear();
+			curPoint.clear();
+			curJumps.clear();
 
 			if (curContext != NULL)
 			{
@@ -466,11 +517,15 @@ struct Builder
 			int num = curPoint.size() - countPoint, posInsert = curPoint[num];
 			curSequence.insert(curSequence.begin() + posInsert, "$JMP");
 			char *PositionToJump = new char[1024];
-			_itoa(curPoint.back() + 2, PositionToJump, 10);
+			_itoa(curPoint.back() , PositionToJump, 10);
 			curSequence.insert(curSequence.begin() + posInsert + 1, PositionToJump);
 			
+			//curJumps.push_back(make_pair(posInsert, curPoint.back()));
+			correctSequence2(posInsert);
 			countPoint = 0;			
-			curPoint.erase(curPoint.begin() + num, curPoint.end() - 1);
+			curPoint.erase(curPoint.begin() + num, curPoint.end());
+
+			curPoint.push_back(curSequence.size());
 			++countPoint;
 			return;
 		}
@@ -481,12 +536,15 @@ struct Builder
 			int num = curPoint.size() - countPoint, posInsert = curPoint[num];
 			curSequence.insert(curSequence.begin() + posInsert, "$JMP");
 			char *PositionToJump = new char[1024];
-			_itoa(curPoint.back() + 2, PositionToJump, 10);
+			_itoa(curPoint.back() , PositionToJump, 10);
 			curSequence.insert(curSequence.begin() + posInsert + 1, PositionToJump);
 			//countPoint.pop_back();
-
+			//curJumps.back().second += 2;
+			//curJumps.push_back(make_pair(posInsert, curPoint.back()));
+			correctSequence2(posInsert);
 			countPoint = 0;
-			curPoint.erase(curPoint.begin() + num, curPoint.end() - 1);
+			curPoint.erase(curPoint.begin() + num, curPoint.end());
+			curPoint.push_back(curSequence.size());
 			++countPoint;
 			return;
 		}
