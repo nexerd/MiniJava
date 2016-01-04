@@ -127,6 +127,7 @@ struct Builder
 			curClass = new MyClass(Stack[0].str == "static", Names.back());
 			curContext = new Context();
 			Names.pop_back();
+			countPoint = 0;
 			return;
 		}
 
@@ -155,7 +156,7 @@ struct Builder
 				else
 				{					
 					curPoint.pop_back();
-					dif = curPoint.back();
+					dif = curPoint.size() ? curPoint.back() : 0;
 				}
 				Names.pop_back();
 				
@@ -352,6 +353,7 @@ struct Builder
 							curPoint.push_back(curSequence.size());
 						}
 					}
+					curArgumetLuist.clear();
 				}
 			}
 			return;
@@ -415,6 +417,7 @@ struct Builder
 
 			curFunc = NULL;
 			curPoint.clear();
+			countPoint = 0;
 			return;
 		}
 		if (leftSymbol == "класс")

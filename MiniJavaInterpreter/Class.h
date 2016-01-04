@@ -640,6 +640,7 @@ struct MyClass
 		Value* A = new Value(new  MyClass(false, name));
 		A->Obj->FuncList = vector<Function>(FuncList);
 		A->Obj->ClassContext.VarList = vector<Variable>(ClassContext.VarList);
+		A->Obj->is_create = true;
 		return A;
 	}
 
