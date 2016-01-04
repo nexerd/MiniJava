@@ -614,7 +614,7 @@ struct Function
 struct MyClass
 {
 	string name;
-	string type;
+	//string type;
 	bool is_static;
 	bool is_create;
 	vector<Function> FuncList;
@@ -632,16 +632,15 @@ struct MyClass
 
 	}
 
-	MyClass* makeObject(string& n)
+	Value* makeObject()
 	{
 		if (is_static)
 			throw exception("Is static!");
-		MyClass* Obj = new  MyClass(false, n);
-		Obj->is_create = true;
-		type = name;
-		Obj->FuncList = FuncList;
-		Obj->ClassContext = ClassContext;
-		return Obj;
+
+		Value* A = new Value(new  MyClass(false, name));
+		A->Obj->FuncList = vector<Function>(FuncList);
+		A->Obj->ClassContext.VarList = vector<Variable>(ClassContext.VarList);
+		return A;
 	}
 
 	MyClass(bool _static, string& n) 

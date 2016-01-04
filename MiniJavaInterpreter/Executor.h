@@ -38,6 +38,19 @@ struct Executor
 		return A;
 	}
 
+	Variable* createObj(string& type)
+	{
+		for (int i = 0; i < myClasses->size(); i++)
+		{
+			if ((*myClasses)[i].name == type)
+			{
+				string name = "";
+				return new Variable(name, *((*myClasses)[i].makeObject()));
+			}
+		}
+		throw exception("Name!");
+	}
+
 	void RunProgramm(MyClass** Obj, Function* entryPoint)
 	{
 		if (!(*Obj)->is_static && !(*Obj)->is_create)
@@ -323,7 +336,17 @@ struct Executor
 				i = atoi(entryPoint->Sequence[i + 1].c_str()) - 1;
 				continue;
 			}
-			VarStack.push_back(getVariable( entryPoint->Sequence[i], Obj, entryPoint));
+			if (entryPoint->Sequence[i + 1] == "$create_obj")
+			{
+				VarStack.push_back(createObj(entryPoint->Sequence[i]));
+				continue;
+			}
+			if (entryPoint->Sequence[i] == "$create_obj")
+			{
+				VarStack.push_back(createObj(entryPoint->Sequence[i - 1]));
+				continue;
+			}
+			VarStack.push_back(getVariable(entryPoint->Sequence[i], Obj, entryPoint));
 		}
 	
 	}

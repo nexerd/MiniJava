@@ -426,8 +426,8 @@ struct Builder
 				for (int j = 0; j < Classes.size(); j++)
 				if (Stack[0].str == Classes[j].name)
 				{
-					curContext->VarList.push_back(Variable(Stack[0].str, Names.back(),
-						Classes[j].makeObject(Names.back())));
+					curContext->VarList.push_back(Variable(Stack[0].str, Names.back(), NULL));
+						//Classes[j].makeObject(Names.back())));
 					break;
 				}
 			}
@@ -586,6 +586,15 @@ struct Builder
 		//	--countPoint;
 			//curFunc->Sequence = curSequence;
 			//curSequence.clear();
+			return;
+		}
+
+		if (leftSymbol == "создание_объекта")
+		{			
+			curSequence.push_back(Stack[1].str);
+			curSequence.push_back("$create_obj");
+			Names.push_back("$S");
+			curPoint.push_back(curSequence.size());
 			return;
 		}
 		/*if (leftSymbol == "вызов_функции")
