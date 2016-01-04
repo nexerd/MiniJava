@@ -54,7 +54,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A + B);
+				VarStack.push_back(*B + A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == "-")
@@ -63,7 +63,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A - B);
+				VarStack.push_back(*B - A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == "*")
@@ -72,7 +72,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A * B);
+				VarStack.push_back(*B * A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == "/")
@@ -81,7 +81,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A / B);
+				VarStack.push_back(*B / A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == "%")
@@ -90,7 +90,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A % B);
+				VarStack.push_back(*B % A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == "&&")
@@ -99,7 +99,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A && B);
+				VarStack.push_back(*B && A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == "||")
@@ -108,7 +108,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A || B);
+				VarStack.push_back(*B || A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == "!")
@@ -126,7 +126,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A < B);
+				VarStack.push_back(*B < A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == "==")
@@ -135,7 +135,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A == B);
+				VarStack.push_back(*B == A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == ">")
@@ -144,7 +144,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A > B);
+				VarStack.push_back(*B > A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == "<=")
@@ -153,7 +153,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A < B);
+				VarStack.push_back(*B < A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == "!=")
@@ -162,7 +162,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A == B);
+				VarStack.push_back(*B == A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == ">=")
@@ -171,7 +171,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*A > B);
+				VarStack.push_back(*B > A);
 				continue;
 			}
 			if (entryPoint->Sequence[i] == "=")
@@ -180,7 +180,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				*A = B;
+				*B = A;
 				continue;
 			}
 			if (i + 2 < entryPoint->Sequence.size() && 
@@ -293,6 +293,11 @@ struct Executor
 					i = atoi(entryPoint->Sequence[i + 1].c_str()) - 1;
 				else
 					++i;
+				continue;
+			}
+			if (entryPoint->Sequence[i] == "$JMP_true")
+			{
+				i = atoi(entryPoint->Sequence[i + 1].c_str()) - 1;
 				continue;
 			}
 			VarStack.push_back(getVariable( entryPoint->Sequence[i], Obj, entryPoint));

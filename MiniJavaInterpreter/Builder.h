@@ -147,13 +147,16 @@ struct Builder
 			|| leftSymbol == "лог_выр1" || leftSymbol == "лог_выр2" || leftSymbol == "лог_выр4"
 			|| leftSymbol == "лог_выр5" || leftSymbol == "лог_выр6")
 		{
-
+			int dif = curSequence.size();
 			if (Names.size() != 0)
 			{
 				if (Names.back() != "$S")
 					buffer.push_back(Names.back());
-				else 
+				else
+				{					
 					curPoint.pop_back();
+					dif = curPoint.back();
+				}
 				Names.pop_back();
 				
 			}
@@ -162,12 +165,20 @@ struct Builder
 				if (Names.back() != "$S")
 					buffer.push_back(Names.back());
 				else
+				{
 					curPoint.pop_back();
+				/*	buffer.insert(buffer.begin(),
+						curSequence.begin() + curPoint.back(),
+						curSequence.begin() + dif);
+					curSequence.erase(curSequence.begin() + curPoint.back(), curSequence.begin() + dif);*/
+					dif = 0;
+					
+				}
 				Names.pop_back();
 					
 			}
 			
-			curSequence.insert(curSequence.end(), buffer.rbegin(), buffer.rend());
+			curSequence.insert(curSequence.begin() + dif, buffer.rbegin(), buffer.rend());
 			Names.push_back("$S");
 		
 			buffer.clear();
@@ -203,25 +214,40 @@ struct Builder
 
 				Names.push_back("$S");
 			}
+			int dif = curSequence.size();
 			if (Names.size() != 0)
 			{
 				if (Names.back() != "$S")
 					buffer.push_back(Names.back());
-				else 
+				else
+				{
 					curPoint.pop_back();
+					dif = curPoint.back();
+				}
 				Names.pop_back();
+
 			}
 			if (Names.size() != 0)
 			{
 				if (Names.back() != "$S")
 					buffer.push_back(Names.back());
 				else
+				{
 					curPoint.pop_back();
+					/*buffer.insert(buffer.begin(),
+						curSequence.begin() + curPoint.back(),
+						curSequence.begin() + dif);
+					curSequence.erase(curSequence.begin() + curPoint.back(), curSequence.begin() + dif);*/
+					dif = 0;
+
+				}
 				Names.pop_back();
+
 			}
-			
-			curSequence.insert(curSequence.end(), buffer.rbegin(), buffer.rend());
+
+			curSequence.insert(curSequence.begin() + dif, buffer.rbegin(), buffer.rend());
 			Names.push_back("$S");
+
 			buffer.clear();
 			curSequence.push_back("=");
 			curPoint.push_back(curSequence.size());
@@ -534,7 +560,7 @@ struct Builder
 		{
 			//countPoint = 3;
 			int num = curPoint.size() - countPoint, posInsert = curPoint[num];
-			curSequence.insert(curSequence.begin() + posInsert, "$JMP");
+			curSequence.insert(curSequence.begin() + posInsert, "$JMP_true");
 			char *PositionToJump = new char[1024];
 			_itoa(curPoint.back() , PositionToJump, 10);
 			curSequence.insert(curSequence.begin() + posInsert + 1, PositionToJump);
