@@ -9,7 +9,7 @@ MiniJavaInterpreter/Debug/MiniJava.C32D77EB.tlog/
 *.pdb
 *.vcxproj
 *.vcxproj.filters
-MiniJavaInterpreter/ProgrammFile.txt
+MiniJavaInterpreter/ProgrammFile*.txt
 *.opensdf
 *.hb2
 *.xaz
