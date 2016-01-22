@@ -16,7 +16,7 @@ struct Builder
 	Function* entryPoint;
 	MyClass* mainObj;
 
-	bool is_mainObj;
+	bool is_mainObj = false;
 
 	MyClass* curClass = NULL;
 	Function* curFunc = NULL;
@@ -64,28 +64,6 @@ struct Builder
 			}
 		}
 		fin.close();
-	}
-
-	void correctSequence()
-	{
-		for (int i = 0; i < curJumps.size(); i++)
-		{
-			for (int j = 0; j < curJumps.size(); j++)
-			{
-				if (curJumps[j].first > curJumps[i].first)
-					curJumps[j].first += 2;
-				if (curJumps[j].second > curJumps[i].first)
-					curJumps[j].second += 2;
-			}
-		}
-		char *PositionToJump = new char[1024];
-		for (int i = 0; i < curJumps.size(); i++)
-		{
-			_itoa(curJumps[i].second, PositionToJump, 10);
-			curSequence.insert(curSequence.begin() + curJumps[i].first, "$JMP");
-			curSequence.insert(curSequence.begin() + curJumps[i].first + 1, PositionToJump);
-		}
-
 	}
 
 	void correctSequence2(int p)
@@ -189,79 +167,81 @@ struct Builder
 		}
 		if (leftSymbol == "присваивание")
 		{
-			bool is_swap = false;
 			if (Stack.size() > 3)
 			{			
+				int dif = curSequence.size();
 				vector<string> bufS;
-				while (Names.back() == "$S")
+				if (Names.back() == "$S")
 				{
-					bufS.push_back("$S");
-					Names.pop_back();
-					is_swap = true;
-				}
-					
+					bufS.push_back("$S");		
+					curPoint.pop_back();
+					dif = curPoint.size() ? curPoint.back() : 0;
 
+					while (Names.back() == "$S")
+					{
+						Names.pop_back();
+					} 
+					
+				}
+				else
+				{
+					bufS.push_back(Names.back());
+					Names.pop_back();
+				}
 				string buf = Names.back();
 				Names.pop_back();
 
-				
-				curSequence.push_back(".");
+				vector<string> toInsert;
+				toInsert.push_back(".");
 				
 				if (Stack[0].str == "S")
 				{
-					curSequence.push_back(Names.back());					
+					toInsert.push_back(Names.back());
 					Names.pop_back();
 				}
 				else
-					curSequence.push_back(Stack[0].str);
+					toInsert.push_back(Stack[0].str);
 
-				curSequence.push_back(buf);
+				toInsert.push_back(buf);
+				
+				curSequence.insert(curSequence.begin() + dif, toInsert.begin(), toInsert.end());
 
-				Names.insert(Names.end(), bufS.begin(), bufS.end());
-				Names.push_back("$S");
+				//Names.insert(Names.end(), bufS.begin(), bufS.end());
+				if (bufS.front() != "$S")
+					curSequence.push_back(bufS.front());
+				//Names.push_back("$S");
 				curPoint.push_back(curSequence.size());
 			}
-			int dif = curSequence.size();
-			if (Names.size() != 0)
+			else
 			{
-				if (Names.back() != "$S")
-					buffer.push_back(Names.back());
-				else
+				int dif = curSequence.size();
+				if (Names.size() != 0)
 				{
-					curPoint.pop_back();
-					dif = curPoint.size() ? curPoint.back() : 0;
-				}
-				Names.pop_back();
-
-			}
-			if (Names.size() != 0)
-			{
-				if (Names.back() != "$S")
-					buffer.insert(buffer.begin(), Names.back());
-				else
-				{
-					curPoint.pop_back();
-					/*buffer.insert(buffer.begin(),
-						curSequence.begin() + curPoint.back(),
-						curSequence.begin() + dif);
-					curSequence.erase(curSequence.begin() + curPoint.back(), curSequence.begin() + dif);*/
-					if (!is_swap)
-						dif = 0;
+					if (Names.back() != "$S")
+						buffer.push_back(Names.back());
 					else
 					{
-						int diff = curPoint.size() != 0 ? curPoint.back() : 0;
-						buffer.insert(buffer.begin(),
-							curSequence.begin() + diff,
-							curSequence.begin() + dif);
-						curSequence.erase(curSequence.begin() + diff, curSequence.begin() + dif);
+						curPoint.pop_back();
+						dif = curPoint.size() ? curPoint.back() : 0;
 					}
+					Names.pop_back();
 
 				}
-				Names.pop_back();
+				if (Names.size() != 0)
+				{
+					if (Names.back() != "$S")
+						buffer.insert(buffer.begin(), Names.back());
+					else
+					{
+						curPoint.pop_back();
+						dif = 0;
 
+					}
+					Names.pop_back();
+				}
+
+				curSequence.insert(curSequence.begin() + dif, buffer.begin(), buffer.end());
 			}
-
-			curSequence.insert(curSequence.begin() + dif, buffer.begin(), buffer.end());
 			Names.push_back("$S");
 
 			buffer.clear();
@@ -414,6 +394,8 @@ struct Builder
 				entryPoint = &curClass->FuncList.back();
 				is_mainObj = true;				
 			}
+			else 
+				is_mainObj = false;
 
 			curFunc = NULL;
 			curPoint.clear();
@@ -441,12 +423,19 @@ struct Builder
 			}
 			if (Stack[0].str != "int" && Stack[0].str != "double" && Stack[0].str != "boolean")
 			{
-				for (int j = 0; j < Classes.size(); j++)
-				if (Stack[0].str == Classes[j].name)
+				if (Stack[0].str == curClass->name)
 				{
-					curContext->VarList.push_back(Variable(Stack[0].str, Names.back(), NULL));
+					curContext->VarList.push_back(Variable(Stack[0].str, Names.back(), NULL));					
+				}
+				else
+				{
+					for (int j = 0; j < Classes.size(); j++)
+					if (Stack[0].str == Classes[j].name)
+					{
+						curContext->VarList.push_back(Variable(Stack[0].str, Names.back(), NULL));
 						//Classes[j].makeObject(Names.back())));
-					break;
+						break;
+					}
 				}
 			}
 			else 

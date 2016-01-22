@@ -25,6 +25,11 @@ struct Interpreter
 	{
 		if (l.str_type == "identifier")
 		{
+			if (myBuilder->curClass != NULL && myBuilder->curClass->name == l.str)
+			{
+				l.str_type = "type";
+				return;
+			}
 			for (int i = 0; i < classes.size(); i++)
 			if (classes[i].name == l.str)
 			{

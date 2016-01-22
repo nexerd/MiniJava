@@ -174,7 +174,7 @@ struct Executor
 				VarStack.pop_back();
 				B = VarStack.back();
 				VarStack.pop_back();
-				VarStack.push_back(*B == A);
+				VarStack.push_back(*B != A);
 				continue;
 			}
 			if ( entryPoint->Sequence[i] == ">=")

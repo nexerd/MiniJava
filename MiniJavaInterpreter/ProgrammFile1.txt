@@ -1,0 +1,18 @@
+class A
+{	
+	int val;	
+};
+
+static class MyClass
+{
+	A a;
+	void main() 
+	{ 
+		int value;
+		input value;		
+		a = new A();
+		a.val = value * 2;		
+		
+	};
+};
+
