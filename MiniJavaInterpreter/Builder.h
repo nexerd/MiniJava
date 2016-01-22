@@ -210,7 +210,7 @@ struct Builder
 				if (bufS.front() != "$S")
 					curSequence.push_back(bufS.front());
 				//Names.push_back("$S");
-				curPoint.push_back(curSequence.size());
+				//curPoint.push_back(curSequence.size());
 			}
 			else
 			{
