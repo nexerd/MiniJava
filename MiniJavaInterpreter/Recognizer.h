@@ -2,6 +2,21 @@
 #include "Lexem.h"
 #include "Rule.h"
 
+
+class syntax_exception : exception
+{
+public:
+	const char* str;
+	syntax_exception(string cause) : exception()
+	{
+		char* buff = new char[100];
+		strcpy(buff, cause.c_str());
+		str = buff;
+	}
+	virtual const char* what() const throw() { return str; }
+};
+
+
 struct  Recognizer
 {
 	vector<rule> oldP;
@@ -181,7 +196,9 @@ bool Recognizer::Recognize(lexem l)
 			case (empty) :
 			{
 							 // Если клетка в таблице пуста, то ошибка - недопустимая комбинация.
-							 throw exception("Empry cell of preceded table!");
+							 //throw exception("Empry cell of preceded table!");
+							 string cause =  "Unexpected character '" +  c.str + "' .";
+							 throw syntax_exception(cause);
 							 break;
 			}
 			case (preceded) :
@@ -223,16 +240,16 @@ bool Recognizer::Recognize(lexem l)
 		}
 		return true;
 	}
-	for (int j = 0; j < myStack.size(); j++)
+/*	for (int j = 0; j < myStack.size(); j++)
 		cout << myStack[j].str << " ";
-	cout << endl;
+	cout << endl;*/
 }
 
 bool Recognizer::RecognizeLexems(lexem l, vector<lexem>& LexemStack, int& numberRule)
 {
-	for (int j = 0; j < myStack.size(); j++)
+	/*for (int j = 0; j < myStack.size(); j++)
 		cout << myStack[j].str << " ";
-	cout << endl;
+	cout << endl;*/
 	bool rezult = Recognize(l);
 	LexemStack = ListOfConvulsion;
 	numberRule = numRule;
@@ -281,11 +298,14 @@ void Recognizer::Convolution(vector<lexem>& myStack, vector<rule>& P, vector<str
 		myStack.push_back(lexem(P[i].left, P[i].left));
 		// Записываем номер правила
 		numRule = i;
-		cout << oldP[i].left << endl;
+	//	cout << oldP[i].left << endl;
 		return;
 	}
 	// Если неудалось подобрать правила, то ошибка
-	throw exception("Not a rule for this basic!");
+	//throw exception("Not a rule for this basic!");
+
+	throw syntax_exception("Unknown expression!");
+	
 }
 
 // Метод заменяющий в правилах все нетерм. символы на "S"

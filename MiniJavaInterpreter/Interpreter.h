@@ -44,38 +44,26 @@ struct Interpreter
 		string str;
 		ifstream fin(ProgrammFile);
 		lexem l;
-		try
+		while (!fin.eof())
 		{
-			while (!fin.eof())
+			getline(fin, str);
+			str += '\n';
+			cout << str;
+			for (int i = 0; i < str.size(); i++)
+			if (myScanner->Scan(str[i], i, str.size(), &l))
 			{
-				getline(fin, str);
-				str += '\n';
-				//cout << str << endl;
-				for (int i = 0; i < str.size(); i++)
-				if (myScanner->Scan(str[i], i, str.size(), &l))
+				CorrectTypeLexem(l, myBuilder->Classes);
+				while (!myRecognizer->RecognizeLexems(l, ListOfConvulsion, ruleNumber))
 				{
-					CorrectTypeLexem(l, myBuilder->Classes);
-					while (!myRecognizer->RecognizeLexems(l, ListOfConvulsion, ruleNumber))
-					{
-						myBuilder->makePart(ListOfConvulsion, ruleNumber);
-					}
+					myBuilder->makePart(ListOfConvulsion, ruleNumber);
 				}
 			}
-			fin.close();
-			myScanner->check();
-			while (!myRecognizer->RecognizeLexems(lexem("$e", _$e), ListOfConvulsion, ruleNumber))
-			{
-				myBuilder->makePart(ListOfConvulsion, ruleNumber);
-			}
 		}
-		catch (lexical_exception& ex)
+		fin.close();
+		myScanner->check();
+		while (!myRecognizer->RecognizeLexems(lexem("$e", _$e), ListOfConvulsion, ruleNumber))
 		{
-			for (int i = 0; i < ex.position; i++)
-				cout << '.';
-			cout << "^" << endl;
-			cout << "Lexical error!" << endl;
-			cout << ex.what() << endl;
+			myBuilder->makePart(ListOfConvulsion, ruleNumber);
 		}
-		
 	}
 };

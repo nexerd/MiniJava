@@ -4,11 +4,21 @@
 #include <iostream>
 using namespace std;
 
-
 struct MyClass;
 struct Object;
 
-
+class execute_exception : exception
+{
+public:
+	const char* str;
+	execute_exception(string cause) : exception()
+	{
+		char* buff = new char[100];
+		strcpy(buff, cause.c_str());
+		str = buff;
+	}
+	virtual const char* what() const throw() { return str; }
+};
 
 union Value
 {
@@ -90,7 +100,7 @@ struct Variable
 			value =  a->value;
 			return;
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '='");
 	}
 
 	Variable* operator+(Variable* a)
@@ -130,7 +140,7 @@ struct Variable
 			return new Variable(type, string(), Value(value.Boolean + a->value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '+'");
 	}
 
 	Variable* operator-(Variable* a)
@@ -170,7 +180,7 @@ struct Variable
 			return new Variable(type, string(), Value(value.Boolean - a->value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '-'");
 	}
 
 	Variable* operator*(Variable* a)
@@ -210,57 +220,73 @@ struct Variable
 			return new Variable(type, string(), Value(value.Boolean * a->value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '*'");
 	}
 
 	Variable* operator/(Variable* a)
 	{
 		if (type == "int" && a->type == "double")
 		{
+			if (a->value.Real == 0)
+				throw execute_exception("Division by zero");
 			return new Variable(type, string(), Value(value.Integer / a->value.Real));
 			 
 		}
 		if (type == "double" && a->type == "int")
 		{
+			if (a->value.Integer == 0)
+				throw execute_exception("Division by zero");
 			return new Variable(type, string(), Value(value.Real / a->value.Integer));
 			 
 		}
 		if (type == "boolean" && a->type == "int")
 		{
+			if (a->value.Integer == 0)
+				throw execute_exception("Division by zero");
 			return new Variable(type, string(), Value(value.Boolean / a->value.Integer));
 			 
 		}
 		if (type == "int" && a->type == "boolean")
 		{
+			if (a->value.Boolean == 0)
+				throw execute_exception("Division by zero");
 			return new Variable(type, string(), Value(value.Integer / a->value.Boolean));
 			 
 		}
 		if (type == a->type && type == "int")
 		{
+			if (a->value.Integer == 0)
+				throw execute_exception("Division by zero");
 			return new Variable(type, string(), Value(value.Integer / a->value.Integer));
 			 
 		}
 		if (type == a->type && type == "double")
 		{
+			if (a->value.Real == 0)
+				throw execute_exception("Division by zero");
 			return new Variable(type, string(), Value(value.Real / a->value.Real));
 			 
 		}
 		if (type == "boolean" && a->type == "boolean")
 		{
+			if (a->value.Boolean == 0)
+				throw execute_exception("Division by zero");
 			return new Variable(type, string(), Value(value.Boolean / a->value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '/'");
 	}
 
 	Variable* operator%(Variable* a)
 	{
 		if (type == "int" && a->type == "int")
 		{
+			if (a->value.Integer == 0)
+				throw execute_exception("Division by zero");
 			return new Variable(type, string(), Value(value.Integer % a->value.Integer));
 			 
 		}		
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '%'");
 	}
 
 	Variable* operator&&(Variable* a)
@@ -270,7 +296,7 @@ struct Variable
 			return new Variable(type, string(), Value(value.Boolean && a->value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '&&'");
 	}
 
 	Variable* operator||(Variable* a)
@@ -280,7 +306,7 @@ struct Variable
 			return new Variable(type, string(), Value(value.Boolean || a->value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '||'");
 	}
 
 	Variable* operator!()
@@ -290,7 +316,7 @@ struct Variable
 			return new Variable(type, string(), Value(!value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '!'");
 	}
 
 	Variable* operator<(Variable* a)
@@ -330,7 +356,7 @@ struct Variable
 			return new Variable("boolean", string(), Value(value.Boolean < a->value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '<'");
 	}
 
 	Variable* operator==(Variable* a)
@@ -375,7 +401,7 @@ struct Variable
 			return new Variable("boolean", string(), Value(value.Obj == a->value.Obj));
 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '=='");
 	}
 
 	Variable* operator>(Variable* a)
@@ -415,7 +441,7 @@ struct Variable
 			return new Variable("boolean", string(), Value(value.Boolean > a->value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '>'");
 	}
 
 	Variable* operator<=(Variable* a)
@@ -455,7 +481,7 @@ struct Variable
 			return new Variable("boolean", string(), Value(value.Boolean <= a->value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '<='");
 	}
 
 	Variable* operator!=(Variable* a)
@@ -500,7 +526,7 @@ struct Variable
 			return new Variable("boolean", string(), Value(value.Obj != a->value.Obj));
 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '!='");
 	}
 
 	Variable* operator>=(Variable* a)
@@ -540,11 +566,12 @@ struct Variable
 			return new Variable("boolean", string(), Value(value.Boolean >= a->value.Boolean));
 			 
 		}
-		throw exception("Type");
+		throw execute_exception("Inconsistency type in operation '>='");
 	}
 
 	void input()
 	{
+		cout << "Input value of " << name << " : ";
 		if (type == "int")
 		{
 			cin >> value.Integer;
@@ -560,11 +587,12 @@ struct Variable
 			cin >> value.Real;
 			return;
 		}
-		throw exception("Type!");		
+		throw execute_exception("Inconsistency type in operation 'Input'");		
 	}
 
 	void output()
 	{
+		cout << "Output value of " << name << " : ";
 		if (type == "int")
 		{
 			cout << value.Integer << endl;
@@ -580,7 +608,7 @@ struct Variable
 			cout << value.Real << endl;
 			return;
 		}
-		throw exception("Type!");
+		throw execute_exception("Inconsistency type in operation 'Output'");
 	}
 };
 
@@ -677,7 +705,7 @@ struct MyClass
 	Value* makeObject()
 	{
 		if (is_static)
-			throw exception("Is static!");
+			throw execute_exception("'" + name + "' is static class!");
 
 		Value* A = new Value(new  Object(*this));
 		return A;
@@ -693,7 +721,7 @@ struct MyClass
 	Context* getContext()
 	{
 		if (!is_static)
-			throw exception("Is not Static");
+			throw execute_exception("'" + name + "' is not static class!");
 		return &ClassContext;
 	}
 
