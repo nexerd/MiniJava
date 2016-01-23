@@ -1,0 +1,41 @@
+static class MathClass
+{
+	double Sum(double s1, double s2, double s3)
+	{	
+		return s1 + s2 + s3;
+		
+	};
+	double Mul(double s1, double s2, double s3)
+	{	
+		double M;
+		M = s1 * s2 * s3;
+		return M;
+		
+	};
+			
+};
+
+static class MyClass
+{
+	void main() 
+	{ 
+		double a;
+		double b;
+		double c;
+
+		input a;
+		input b;
+		input c;
+
+		double sum;
+		double mul;
+		
+		sum = MathClass.Sum(a, b, c);
+		mul = MathClass.Mul(a, b, c);
+
+		output sum;
+		output mul;
+		
+	};
+};
+

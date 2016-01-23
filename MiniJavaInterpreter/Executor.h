@@ -25,20 +25,37 @@ struct Executor
 		return NULL;
 	}
 
-	Variable* getVariable(string& name, Context* curConext, Function* entryPoint)
+	bool getClassNext(string& name, string& fun_name, Context** nextC, Behavior** nextB)
 	{
-		Variable* A;
-		if (!entryPoint->CurContext.getVariable(name, &A))
+		Function* f = NULL;
+		for (int i = 0; i < myClasses->size(); i++)
 		{
-			if (!entryPoint->Parametrs.getVariable(name, &A))
+			if ((*myClasses)[i].name == name && (*myClasses)[i].is_static)
 			{
-				if (!curConext->getVariable(name, &A))
+				if ((*myClasses)[i].ClassBehavior.getFunction(fun_name, &f))
 				{
-					throw exception("Name!");
+					*nextC = &(*myClasses)[i].ClassContext;
+					*nextB = &(*myClasses)[i].ClassBehavior;
+					return true;
 				}
 					
 			}
 		}
+		return false;
+	}
+
+	Variable* getVariable(string& name, Context* curConext, Function* entryPoint)
+	{
+		Variable* A = NULL;
+		if (!entryPoint->CurContext.getVariable(name, &A))
+		{
+			if (!entryPoint->Parametrs.getVariable(name, &A))
+			{
+				curConext->getVariable(name, &A);					
+			}
+		}
+		if (A == NULL)
+			throw exception("Name!");
 		return A;
 	}
 
@@ -263,19 +280,32 @@ struct Executor
 				Function* nextFun;
 				
 				string nameF = entryPoint->Sequence[i + 2];
-				VarStack.push_back(getVariable(entryPoint->Sequence[i + 3], curConext, entryPoint));
+
+				Context* nextConext;
+				Behavior* nextBehavior;
 				
-				Object* ObjF;
-				ObjF = VarStack.back()->value.Obj;
-				ObjF->objBehavior->getFunction(nameF, &nextFun);
-				VarStack.pop_back();
+				if (!getClassNext(entryPoint->Sequence[i + 3], entryPoint->Sequence[i + 2], &nextConext, &nextBehavior))
+				{
+					VarStack.push_back(getVariable(entryPoint->Sequence[i + 3], curConext, entryPoint));
+					Object* ObjF;
+					ObjF = VarStack.back()->value.Obj;
+					ObjF->objBehavior->getFunction(nameF, &nextFun);
+					VarStack.pop_back();
+
+					nextConext = &(ObjF->objContext);
+					nextBehavior = ObjF->objBehavior;
+				}
+				else 
+					nextBehavior->getFunction(nameF, &nextFun);
+				
+				
 				int countParams = atoi(entryPoint->Sequence[i + 1].c_str());
 				for (int j = 0; j < countParams; j++)
 				{
 					nextFun->Parametrs.VarList[j] = VarStack.back();
 					VarStack.pop_back();
 				}
-				RunProgramm(&(ObjF->objContext), ObjF->objBehavior,  nextFun);
+				RunProgramm(nextConext, nextBehavior, nextFun);
 				if (nextFun->returnValue.type != "void")
 					VarStack.push_back(&nextFun->returnValue);
 				i += 3;
