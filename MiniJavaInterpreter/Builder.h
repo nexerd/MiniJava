@@ -388,10 +388,10 @@ struct Builder
 			Names.pop_back();
 
 			curFunc->returnValue.type = Stack[0].str;
-			curClass->FuncList.push_back(*curFunc);
+			curClass->ClassBehavior.addFunction(*curFunc);
 			if (curFunc->name == "main")
 			{
-				entryPoint = &curClass->FuncList.back();
+				entryPoint = &curClass->ClassBehavior.FuncList.back();
 				is_mainObj = true;				
 			}
 			else 

@@ -4,14 +4,18 @@
 #include <iostream>
 using namespace std;
 
+
 struct MyClass;
+struct Object;
+
+
 
 union Value
 {
 	int Integer;
 	double Real;
 	bool Boolean;
-	MyClass* Obj;
+	Object* Obj;
 	Value()	{};
 	Value(int v)
 	{
@@ -25,7 +29,7 @@ union Value
 	{
 		Boolean = v;
 	}
-	Value(MyClass* v)
+	Value(Object* v)
 	{
 		Obj = v;
 	}
@@ -592,6 +596,11 @@ struct Context
 		}
 		return false;
 	}
+
+	void operator =(Context* classContext)
+	{
+		VarList = vector<Variable>(classContext->VarList.begin(), classContext->VarList.end());
+	}
 };
 
 struct Function
@@ -611,14 +620,9 @@ struct Function
 	Function() {};
 };
 
-struct MyClass
+struct Behavior
 {
-	string name;
-	//string type;
-	bool is_static;
-	bool is_create;
 	vector<Function> FuncList;
-	Context ClassContext;
 
 	bool getFunction(string& name, Function** f)
 	{
@@ -629,28 +633,69 @@ struct MyClass
 			return true;
 		}
 		return false;
-
 	}
+
+	void addFunction(Function& f)
+	{
+		FuncList.push_back(f);
+	}
+};
+
+struct Object
+{
+	MyClass*  objType;
+	Context objContext;
+	Behavior* objBehavior;
+	Object(){};
+	Object(MyClass& mClass);
+	Context* getContext()
+	{
+		return &objContext;
+	}
+
+};
+
+struct MyClass
+{
+	string name;
+	//string type;
+	bool is_static;
+	Behavior ClassBehavior;
+	Context ClassContext;
+	
 
 	Value* makeObject()
 	{
 		if (is_static)
 			throw exception("Is static!");
 
-		Value* A = new Value(new  MyClass(false, name));
-		A->Obj->FuncList = vector<Function>(FuncList);
-		A->Obj->ClassContext.VarList = vector<Variable>(ClassContext.VarList);
-		A->Obj->is_create = true;
+		Value* A = new Value(new  Object(*this));
 		return A;
 	}
 
 	MyClass(bool _static, string& n) 
 	{
-		FuncList.reserve(30);
-		is_static = _static;
-		is_create = false;
+		ClassBehavior.FuncList.reserve(30);
+		is_static = _static;		
 		name = n;
 	};
 
+	Context* getContext()
+	{
+		if (!is_static)
+			throw exception("Is not Static");
+		return &ClassContext;
+	}
+
 	MyClass();
 };
+
+
+
+
+Object::Object(MyClass& mClass)
+{
+	objType = &mClass;
+	objContext = mClass.ClassContext;
+	objBehavior = &mClass.ClassBehavior;
+}

@@ -43,7 +43,8 @@ int main()
 				  myInterpreter->work();
 
 				  myExecutor = new Executor(&myBuilder->Classes);
-				  myExecutor->RunProgramm(&myBuilder->mainObj, myBuilder->entryPoint);
+				  myExecutor->RunProgramm(myBuilder->mainObj->getContext(),
+					  &myBuilder->mainObj->ClassBehavior, myBuilder->entryPoint);
 				  break;
 		}
 		case 0:

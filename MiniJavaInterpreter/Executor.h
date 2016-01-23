@@ -11,25 +11,29 @@ struct Executor
 		myClasses = Classes;		
 	}
 
-	Variable* getVariable(string& name, MyClass** Obj, Function* entryPoint)
+	Variable* getClassVariable(string& name, string& second_name)
+	{
+		Variable* A;
+		for (int i = 0; i < myClasses->size(); i++)
+		{
+			if ((*myClasses)[i].name == name && (*myClasses)[i].is_static)
+			{
+				if ((*myClasses)[i].ClassContext.getVariable(second_name, &A))
+					return A;
+			}
+		}
+		return NULL;
+	}
+
+	Variable* getVariable(string& name, Context* curConext, Function* entryPoint)
 	{
 		Variable* A;
 		if (!entryPoint->CurContext.getVariable(name, &A))
 		{
 			if (!entryPoint->Parametrs.getVariable(name, &A))
 			{
-				if (!(*Obj)->ClassContext.getVariable(name, &A))
+				if (!curConext->getVariable(name, &A))
 				{
-					for (int i = 0; i < myClasses->size(); i++)
-					{
-						if ((*myClasses)[i].name == name && (*myClasses)[i].is_static)
-						{		
-							A = new Variable();
-							A->value.Obj = &(*myClasses)[i];
-							A->type = "Obj";
-							return A;
-						}
-					}
 					throw exception("Name!");
 				}
 					
@@ -50,10 +54,8 @@ struct Executor
 		throw exception("Name!");
 	}
 
-	void RunProgramm(MyClass** Obj, Function* entryPoint)
-	{
-		if (!(*Obj)->is_static && !(*Obj)->is_create)
-			throw exception("Object!");
+	void RunProgramm(Context* curConext, Behavior* curBehavior, Function* entryPoint)
+	{		
 		FunStack.push_back(entryPoint);
 		vector<Variable*> VarStack;
 		Variable* A;
@@ -249,11 +251,11 @@ struct Executor
 				Function* nextFun;
 				
 				string nameF = entryPoint->Sequence[i + 2];
-				VarStack.push_back(getVariable(entryPoint->Sequence[i + 3], Obj, entryPoint));
+				VarStack.push_back(getVariable(entryPoint->Sequence[i + 3], curConext, entryPoint));
 				
-				MyClass* ObjF;
+				Object* ObjF;
 				ObjF = VarStack.back()->value.Obj;
-				ObjF->getFunction(nameF, &nextFun);
+				ObjF->objBehavior->getFunction(nameF, &nextFun);
 				VarStack.pop_back();
 				int countParams = atoi(entryPoint->Sequence[i + 1].c_str());
 				for (int j = 0; j < countParams; j++)
@@ -261,7 +263,7 @@ struct Executor
 					nextFun->Parametrs.VarList[j] = VarStack.back();
 					VarStack.pop_back();
 				}
-				RunProgramm(&ObjF, nextFun);
+				RunProgramm(&(ObjF->objContext), ObjF->objBehavior,  nextFun);
 				if (nextFun->returnValue.type != "void")
 					VarStack.push_back(&nextFun->returnValue);
 				i += 3;
@@ -272,7 +274,7 @@ struct Executor
 			{
 				Function* nextFun;
 				string nameF = entryPoint->Sequence[i + 2];
-				(*Obj)->getFunction(nameF, &nextFun);				
+				curBehavior->getFunction(nameF, &nextFun);				
 				
 				int countParams = atoi(entryPoint->Sequence[i + 1].c_str());
 				for (int j = 0; j < countParams; j++)
@@ -280,7 +282,7 @@ struct Executor
 					nextFun->Parametrs.VarList[j] = VarStack.back();
 					VarStack.pop_back();
 				}
-				RunProgramm(Obj, nextFun);
+				RunProgramm(curConext, curBehavior, nextFun);
 				if (nextFun->returnValue.type != "void")
 					VarStack.push_back(&nextFun->returnValue);
 				i += 2;
@@ -290,9 +292,15 @@ struct Executor
 
 			if (entryPoint->Sequence[i] == ".")
 			{
-				VarStack.push_back(getVariable(entryPoint->Sequence[i + 1], Obj, entryPoint));
-				VarStack.back()->value.Obj->ClassContext.getVariable(entryPoint->Sequence[i + 2], &A);
-				VarStack.pop_back();
+
+				A = getClassVariable(entryPoint->Sequence[i + 1], entryPoint->Sequence[i + 2]);
+				if (A == NULL)
+				
+				{
+					VarStack.push_back(getVariable(entryPoint->Sequence[i + 1], curConext, entryPoint));
+					VarStack.back()->value.Obj->objContext.getVariable(entryPoint->Sequence[i + 2], &A);
+					VarStack.pop_back();
+				}			
 				VarStack.push_back(A);	
 				i += 2;
 				continue;
@@ -347,7 +355,7 @@ struct Executor
 				VarStack.push_back(createObj(entryPoint->Sequence[i - 1]));
 				continue;
 			}
-			VarStack.push_back(getVariable(entryPoint->Sequence[i], Obj, entryPoint));
+			VarStack.push_back(getVariable(entryPoint->Sequence[i], curConext, entryPoint));
 		}
 	
 	}
