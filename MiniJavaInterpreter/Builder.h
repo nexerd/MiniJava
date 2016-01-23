@@ -142,7 +142,8 @@ struct Builder
 			if (Names.size() != 0)
 			{
 				if (Names.back() != "$S")
-					buffer.push_back(Names.back());
+					//buffer.push_back(Names.back());
+					buffer.insert(buffer.begin(), Names.back());
 				else
 				{
 					curPoint.pop_back();

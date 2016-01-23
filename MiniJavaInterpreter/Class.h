@@ -372,7 +372,7 @@ struct Variable
 		}
 		if (a->type == "NULL")
 		{
-			return new Variable("boolean", string(), Value(value.Boolean == a->value.Boolean));
+			return new Variable("boolean", string(), Value(value.Obj == a->value.Obj));
 
 		}
 		throw exception("Type");
@@ -497,7 +497,7 @@ struct Variable
 		}
 		if (a->type == "NULL")
 		{
-			return new Variable("boolean", string(), Value(value.Boolean != a->value.Boolean));
+			return new Variable("boolean", string(), Value(value.Obj != a->value.Obj));
 
 		}
 		throw exception("Type");
