@@ -1,0 +1,76 @@
+class Tree
+{
+	int value;
+	Tree left;
+	Tree right;
+	
+	void add(int v) 
+	{ 
+		if (v < value)
+		{
+			if ( left != NULL)
+			{
+				left.add(v);
+			}
+			else
+			{
+				left = new Tree();
+				left.value = v;
+			};
+		}
+		else
+		{
+			if ( right != NULL)
+			{
+				right.add(v);
+			}
+			else
+			{
+				right = new Tree();
+				right.value = v;
+			};
+		};
+		
+	};
+
+	void show()
+	{ 
+		if (left != NULL)
+		{			
+			left.show();
+		};
+		output value;
+		if (right != NULL)
+		{			
+			right.show();
+		};
+		
+	};
+	
+		
+};
+
+static class MyClass
+{
+	int value;
+	Tree root;
+	void main() 
+	{ 
+		input value;		
+		root = new Tree();
+		root.value = value;
+		input value;
+		root.add(value);
+		input value;
+		root.add(value);
+		input value;
+		root.add(value);
+		input value;
+		root.add(value);
+		input value;
+		root.add(value);
+		root.show();
+		
+	};
+};
+

@@ -1,0 +1,76 @@
+class List
+{
+	int value;
+	List next;
+	
+	void add(int v) 
+	{ 
+		int buffer;
+		List objBuf;
+		if (v < value)
+		{
+			buffer = value;
+			value = v;
+			if (next != NULL)
+			{
+				objBuf = next;
+				next = new List();
+				next.next = objBuf;				
+			}
+			else
+			{		
+				next = new List();						
+			};
+			next.value = buffer;	
+		}
+		else
+		{
+
+			if (next != NULL)
+			{
+				next.add(v);
+			}
+			else
+			{
+				next = new List();
+				next.value = v;			
+			};
+		};
+	};
+
+	void show()
+	{ 
+		output value;
+		if (next != NULL)
+		{			
+			next.show();
+		};
+	};
+	
+		
+};
+
+static class MyClass
+{
+	int value;
+	List head;
+	void main() 
+	{ 
+		input value;		
+		head = new List();
+		head.value = value;
+		input value;
+		head.add(value);
+		input value;
+		head.add(value);
+		input value;
+		head.add(value);
+		input value;
+		head.add(value);
+		input value;
+		head.add(value);
+		head.show();
+		
+	};
+};
+
