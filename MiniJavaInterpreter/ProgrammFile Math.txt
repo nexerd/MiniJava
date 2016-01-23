@@ -12,6 +12,10 @@ static class MathClass
 		return M;
 		
 	};
+	double Div(double s1, double s2, double s3)
+	{			
+		return s1/s2/s3;		
+	};
 			
 };
 
@@ -29,12 +33,16 @@ static class MyClass
 
 		double sum;
 		double mul;
-		
+		double div;
+
 		sum = MathClass.Sum(a, b, c);
 		mul = MathClass.Mul(a, b, c);
 
+		div = MathClass.Div(a, b, c);
+		
 		output sum;
 		output mul;
+		output div;
 		
 	};
 };

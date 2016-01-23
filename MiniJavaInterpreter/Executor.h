@@ -55,7 +55,7 @@ struct Executor
 			}
 		}
 		if (A == NULL)
-			throw execute_exception("Undefine variable!");
+			throw execute_exception("Undefine variable or function!");
 		return A;
 	}
 
@@ -68,7 +68,7 @@ struct Executor
 				return new Variable(type, *((*myClasses)[i].makeObject()));
 			}
 		}
-		throw execute_exception("Undefine variable!");
+		throw execute_exception("Undefine class name!");
 	}
 
 	void RunProgramm(Context* curConext, Behavior* curBehavior, Function* entryPoint)

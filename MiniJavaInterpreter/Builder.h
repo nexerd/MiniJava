@@ -151,7 +151,8 @@ struct Builder
 						curSequence.begin() + curPoint.back(),
 						curSequence.begin() + dif);
 					curSequence.erase(curSequence.begin() + curPoint.back(), curSequence.begin() + dif);*/
-					dif = 0;
+
+					//dif = 0;
 					
 				}
 				Names.pop_back();
