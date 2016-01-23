@@ -85,7 +85,7 @@ struct Variable
 			value.Integer = 0 + a->value.Boolean;
 			return;
 		}
-		if (type == a->type)
+		if (type == a->type || a->type == "NULL")
 		{
 			value =  a->value;
 			return;
@@ -370,6 +370,11 @@ struct Variable
 			return new Variable("boolean", string(), Value(value.Boolean == a->value.Boolean));
 			 
 		}
+		if (a->type == "NULL")
+		{
+			return new Variable("boolean", string(), Value(value.Boolean == a->value.Boolean));
+
+		}
 		throw exception("Type");
 	}
 
@@ -489,6 +494,11 @@ struct Variable
 		{
 			return new Variable("boolean", string(), Value(value.Boolean != a->value.Boolean));
 			 
+		}
+		if (a->type == "NULL")
+		{
+			return new Variable("boolean", string(), Value(value.Boolean != a->value.Boolean));
+
 		}
 		throw exception("Type");
 	}

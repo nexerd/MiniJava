@@ -43,7 +43,7 @@ struct Executor
 	}
 
 	Variable* createObj(string& type)
-	{
+	{		
 		for (int i = 0; i < myClasses->size(); i++)
 		{
 			if ((*myClasses)[i].name == type)
@@ -219,6 +219,12 @@ struct Executor
 					VarStack.push_back(new Variable(type,
 						Value("true" == entryPoint->Sequence[i])));
 				}
+				if (entryPoint->Sequence[i + 1] == "NULL")
+				{
+					type = "NULL";
+					VarStack.push_back(new Variable(type,
+						Value((Object*)NULL)));
+				}
 				i += 2;
 				continue;
 			}
@@ -242,6 +248,12 @@ struct Executor
 					type = "boolean";
 					VarStack.push_back(new Variable(type,
 						Value("true" == entryPoint->Sequence[i - 2])));
+				}
+				if (entryPoint->Sequence[i - 1] == "NULL")
+				{
+					type = "NULL";
+					VarStack.push_back(new Variable(type,
+						Value((Object*)NULL)));
 				}
 				//i += 2;
 				continue;

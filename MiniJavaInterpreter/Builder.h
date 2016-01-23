@@ -605,6 +605,16 @@ struct Builder
 			curPoint.push_back(curSequence.size());
 			return;
 		}
+
+		if (leftSymbol == "нулевой_указатель")
+		{
+			Names.push_back("$S");
+			curSequence.push_back(Stack[0].str);
+			curSequence.push_back(Stack[0].str_type);
+			curSequence.push_back("$create");
+			curPoint.push_back(curSequence.size());
+		}
+
 		/*if (leftSymbol == "вызов_функции")
 		{
 			curArgumetLuist.insert(curArgumetLuist.begin(), Names.back());
