@@ -304,6 +304,8 @@ struct Executor
 					VarStack.pop_back();
 				}
 				RunProgramm(nextConext, nextBehavior, nextFun);
+				if (nextFun->returnValue.type != "void" && !nextFun->is_returned)
+					throw execute_exception("Function '" + nextFun->name + "' must retund value!");
 				if (nextFun->returnValue.type != "void")
 					VarStack.push_back(&nextFun->returnValue);
 				i += 3;
@@ -323,6 +325,8 @@ struct Executor
 					VarStack.pop_back();
 				}
 				RunProgramm(curConext, curBehavior, nextFun);
+				if (nextFun->returnValue.type != "void" && !nextFun->is_returned)
+					throw execute_exception("Function '" + nextFun->name + "' must retund value!");
 				if (nextFun->returnValue.type != "void")
 					VarStack.push_back(&nextFun->returnValue);
 				i += 2;
@@ -352,7 +356,8 @@ struct Executor
 					A = VarStack.back();
 					VarStack.pop_back();
 					entryPoint->returnValue = A;
-				}				
+					entryPoint->is_returned = true;
+				}	
 				return;
 			}
 			if (entryPoint->Sequence[i] == "$input")

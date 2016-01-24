@@ -645,6 +645,7 @@ struct Function
 {
 	string name;
 	bool is_static;
+	bool is_returned = false;
 	Context CurContext;
 	Context Parametrs;
 	vector<string> Sequence;
