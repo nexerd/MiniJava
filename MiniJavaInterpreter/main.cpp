@@ -73,6 +73,9 @@ int main()
 					  {
 						  myExecutor = new Executor(&myBuilder->Classes);
 
+						  if (myBuilder->mainObj == NULL)
+							  throw execute_exception("There is not entry point!");
+
 						  myExecutor->RunProgramm(myBuilder->mainObj->getContext(),
 							  &myBuilder->mainObj->ClassBehavior, myBuilder->entryPoint);
 					  }

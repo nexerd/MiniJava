@@ -14,7 +14,7 @@ struct Builder
 	vector<MyClass> Classes;
 
 	Function* entryPoint;
-	MyClass* mainObj;
+	MyClass* mainObj = NULL;
 
 	bool is_mainObj = false;
 

@@ -107,7 +107,7 @@ struct Variable
 	{
 		if (type == "int" && a->type == "double")
 		{
-			return new Variable(type, string(), Value(value.Integer + a->value.Real));
+			return new Variable(a->type, string(), Value(value.Integer + a->value.Real));
 
 		}
 		if (type == "double" && a->type == "int")
@@ -147,7 +147,7 @@ struct Variable
 	{
 		if (type == "int" && a->type == "double")
 		{
-			return new Variable(type, string(), Value(value.Integer - a->value.Real));
+			return new Variable(a->type, string(), Value(value.Integer - a->value.Real));
 			 
 		}
 		if (type == "double" && a->type == "int")
@@ -187,7 +187,7 @@ struct Variable
 	{
 		if (type == "int" && a->type == "double")
 		{
-			return new Variable(type, string(), Value(value.Integer * a->value.Real));
+			return new Variable(a->type, string(), Value(value.Integer * a->value.Real));
 			 
 		}
 		if (type == "double" && a->type == "int")
@@ -229,7 +229,7 @@ struct Variable
 		{
 			if (a->value.Real == 0)
 				throw execute_exception("Division by zero");
-			return new Variable(type, string(), Value(value.Integer / a->value.Real));
+			return new Variable(a->type, string(), Value(value.Integer / a->value.Real));
 			 
 		}
 		if (type == "double" && a->type == "int")

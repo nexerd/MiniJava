@@ -4,7 +4,6 @@
 struct Executor
 {
 	vector<MyClass>* myClasses;
-	vector<Function*> FunStack;
 
 	Executor(vector<MyClass>* Classes)
 	{
@@ -72,8 +71,7 @@ struct Executor
 	}
 
 	void RunProgramm(Context* curConext, Behavior* curBehavior, Function* entryPoint)
-	{		
-		FunStack.push_back(entryPoint);
+	{				
 		vector<Variable*> VarStack;
 		Variable* A;
 		Variable* B;
